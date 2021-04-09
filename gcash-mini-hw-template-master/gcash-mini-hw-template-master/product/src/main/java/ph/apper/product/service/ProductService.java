@@ -59,9 +59,7 @@ public class ProductService {
                 .findFirst()
                 .orElseThrow(() -> new ProductNotFoundException("Product " + id + " not found"));
     }
-
-    // if getAllProducts() is removed, switch back to ProductData instead of GetProductResponse,
-    // remove productId in ProductData
+    
     public GetProductResponse getProduct(String id) throws ProductNotFoundException {
         Product product = getProductById(id);
 
