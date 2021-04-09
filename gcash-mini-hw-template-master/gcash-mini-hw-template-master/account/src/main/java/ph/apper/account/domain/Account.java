@@ -14,7 +14,7 @@ public class Account {
     private String lastName;
     private String email;
     private String password;
-    private BigDecimal balance;
+    private double balance;
     private boolean isVerified;
 
     private LocalDateTime dateRegistered;

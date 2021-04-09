@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.*;
 import ph.apper.account.domain.Account;
 import ph.apper.account.payload.AccountRequest;
 import ph.apper.account.payload.AuthenticateAccountRequest;
+import ph.apper.account.payload.UpdateBalanceRequest;
 import ph.apper.account.payload.VerifyAccountRequest;
 import ph.apper.account.payload.response.AuthenticateResponse;
 import ph.apper.account.payload.response.NewAccountResponse;
+import ph.apper.account.payload.response.UpdateBalanceResponse;
 import ph.apper.account.service.AccountService;
 
 @RestController
@@ -50,5 +52,15 @@ public class AccountManagementController {
             return new ResponseEntity<>(new AuthenticateResponse(account), HttpStatus.OK);
         return new ResponseEntity<>("Invalid email or password.", HttpStatus.FORBIDDEN);
     }
+
+    @PatchMapping("{accountId}")
+    public ResponseEntity<Object> updateBalance(
+            @PathVariable("accountId") String accountId,
+            @RequestBody UpdateBalanceRequest request){
+        LOGGER.info("Update account balance request received.");
+        UpdateBalanceResponse response = accountService.updateBalance(accountId, request.getNewBalance());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }
 
