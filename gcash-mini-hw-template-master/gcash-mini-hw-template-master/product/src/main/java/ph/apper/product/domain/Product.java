@@ -6,7 +6,7 @@ import lombok.Data;
 public class Product {
     private String productId;
     private String name;
-    private String price;
+    private Double price;
 
     public Product(String id) {
         this.productId = productId;
