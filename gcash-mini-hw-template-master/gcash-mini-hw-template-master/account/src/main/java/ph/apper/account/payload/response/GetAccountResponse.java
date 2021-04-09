@@ -11,7 +11,7 @@ public class GetAccountResponse {
         this.firstName = account.getFirstName();
         this.lastName = account.getLastName();
         this.email = account.getEmail();
-        this.balance = account.getBalance().toString();
+        this.balance = Double.toString(account.getBalance());
     }
 
     @JsonProperty(value="firstName")

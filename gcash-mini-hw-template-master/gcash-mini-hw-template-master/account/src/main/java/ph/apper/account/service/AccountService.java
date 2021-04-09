@@ -38,7 +38,7 @@ public class AccountService {
         account.setLastName(request.getLastName());
         account.setEmail(request.getEmail());
         account.setPassword(request.getPassword());
-        account.setBalance(new BigDecimal("25000.00"));
+        account.setBalance(Double.parseDouble("25000.00"));
         account.setVerified(false);
 
         String verificationCode = IdService.generateCode(6);
@@ -84,7 +84,7 @@ public class AccountService {
 
     public UpdateBalanceResponse updateBalance(String accountId, String newBalance){
         Account account = getAccountById(accountId);
-        account.setBalance(new BigDecimal(newBalance));
+        account.setBalance(Double.parseDouble(newBalance));
 
         return new UpdateBalanceResponse(newBalance);
     }
