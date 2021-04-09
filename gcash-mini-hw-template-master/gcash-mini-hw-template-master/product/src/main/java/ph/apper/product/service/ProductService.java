@@ -59,7 +59,7 @@ public class ProductService {
                 .findFirst()
                 .orElseThrow(() -> new ProductNotFoundException("Product " + id + " not found"));
     }
-    
+
     public GetProductResponse getProduct(String id) throws ProductNotFoundException {
         Product product = getProductById(id);
 
