@@ -15,7 +15,6 @@ import ph.apper.account.payload.response.NewAccountResponse;
 import ph.apper.account.payload.response.UpdateBalanceResponse;
 import ph.apper.account.service.AccountService;
 
-
 @RestController
 @RequestMapping("account")
 public class AccountManagementController {
