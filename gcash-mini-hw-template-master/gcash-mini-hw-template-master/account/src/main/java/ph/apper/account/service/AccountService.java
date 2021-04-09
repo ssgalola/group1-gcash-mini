@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ph.apper.account.domain.Account;
 import ph.apper.account.payload.response.GetAccountResponse;
 import ph.apper.account.payload.response.NewAccountResponse;
+import ph.apper.account.payload.response.UpdateBalanceResponse;
 import ph.apper.account.util.IdService;
 import ph.apper.account.util.VerificationService;
 import ph.apper.account.payload.AccountRequest;
@@ -63,6 +64,12 @@ public class AccountService {
         );
     }
 
+    public Account getAccountById(String accountId){
+        return accounts.stream().filter(
+                        account -> accountId.equals(account.getAccountId().toString())
+                ).findFirst().get();
+    }
+
     public boolean verifyAccount(String verificationCode, String email){
         return accounts.stream().anyMatch(
                 account -> account.getVerificationCode().equals(verificationCode) && account.getEmail().equals(email)
@@ -73,6 +80,13 @@ public class AccountService {
         return accounts.stream().filter(
                 account -> account.getEmail().equals(email) && account.getPassword().equals(password)
         ).findFirst().get();
+    }
+
+    public UpdateBalanceResponse updateBalance(String accountId, String newBalance){
+        Account account = getAccountById(accountId);
+        account.setBalance(new BigDecimal(newBalance));
+
+        return new UpdateBalanceResponse(newBalance);
     }
 
 }
