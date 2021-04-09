@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/gcash-mini-hw-template-master/gcash-mini-hw-template-master/account/account.iml" filepath="$PROJECT_DIR$/gcash-mini-hw-template-master/gcash-mini-hw-template-master/account/account.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gcash-mini-hw-template-master/gcash-mini-hw-template-master/activity/activity.iml" filepath="$PROJECT_DIR$/gcash-mini-hw-template-master/gcash-mini-hw-template-master/activity/activity.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gcash-mini-hw-template-master/gcash-mini-hw-template-master/api-gateway/api-gateway.iml" filepath="$PROJECT_DIR$/gcash-mini-hw-template-master/gcash-mini-hw-template-master/api-gateway/api-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gcash-mini-hw-template-master/gcash-mini-hw-template-master/gcash-mini-hw-template.iml" filepath="$PROJECT_DIR$/gcash-mini-hw-template-master/gcash-mini-hw-template-master/gcash-mini-hw-template.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/group1-gcash-mini.iml" filepath="$PROJECT_DIR$/.idea/group1-gcash-mini.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gcash-mini-hw-template-master/gcash-mini-hw-template-master/product/product.iml" filepath="$PROJECT_DIR$/gcash-mini-hw-template-master/gcash-mini-hw-template-master/product/product.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gcash-mini-hw-template-master/gcash-mini-hw-template-master/purchase/purchase.iml" filepath="$PROJECT_DIR$/gcash-mini-hw-template-master/gcash-mini-hw-template-master/purchase/purchase.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gcash-mini-hw-template-master/gcash-mini-hw-template-master/transfer/transfer.iml" filepath="$PROJECT_DIR$/gcash-mini-hw-template-master/gcash-mini-hw-template-master/transfer/transfer.iml" />
+    </modules>
+  </component>
+</project>
