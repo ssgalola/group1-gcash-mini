@@ -64,9 +64,7 @@ public class AccountService {
     }
 
     public boolean verifyAccount(String verificationCode, String email){
-        return accounts.stream().anyMatch(
-                account -> account.getVerificationCode().equals(verificationCode) && account.getEmail().equals(email)
-        );
+        return verificationService.verifyAccount(email, verificationCode);
     }
 
     public Account authenticateAccount(String email, String password){

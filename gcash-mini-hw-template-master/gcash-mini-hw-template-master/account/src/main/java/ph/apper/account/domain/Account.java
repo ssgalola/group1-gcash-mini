@@ -28,6 +28,4 @@ public class Account {
     public Account(){
 
     }
-
-    private String verificationCode;
 }
