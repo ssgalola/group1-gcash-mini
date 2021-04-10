@@ -48,7 +48,7 @@ public class AccountService {
         return new NewAccountResponse(verificationCode);
     }
 
-    public boolean verify(String email, String verificationCode){
+    public boolean verify(String email, String verificationCode) throws InvalidAccountRequestException{
         boolean isVerified = verificationService.verifyAccount(email, verificationCode);
         if(isVerified)
             getAccount(email).setVerified(true);
