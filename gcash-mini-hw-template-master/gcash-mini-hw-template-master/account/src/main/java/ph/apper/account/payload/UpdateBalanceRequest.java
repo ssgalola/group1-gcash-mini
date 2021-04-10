@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class UpdateBalanceRequest {
     @JsonProperty(value="new_balance")
-    private String newBalance;
+    private Double newBalance;
 }

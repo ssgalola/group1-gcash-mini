@@ -6,9 +6,9 @@ import lombok.Data;
 
 @Data
 public class UpdateBalanceResponse {
-    public UpdateBalanceResponse(String newBalance){
+    public UpdateBalanceResponse(Double newBalance){
         this.newBalance = newBalance;
     }
     @JsonProperty(value="new_balance")
-    private String newBalance;
+    private Double newBalance;
 }
