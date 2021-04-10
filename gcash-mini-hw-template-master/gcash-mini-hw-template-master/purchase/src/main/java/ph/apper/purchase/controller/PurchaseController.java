@@ -86,10 +86,8 @@ public class PurchaseController {
         UpdateBalanceRequest newBalance = new UpdateBalanceRequest();
         newBalance.setNewBalance(newBalan);
 
-        UpdateBalanceResponse updateResponse = restTemplate.patchForObject(accountUrl, newBalance, UpdateBalanceResponse.class);
-//        UpdateBalanceResponse newBal = updateResponse.getBody();
+        UpdateBalanceResponse updateResponse = restTemplate.postForObject(accountUrl, newBalance, UpdateBalanceResponse.class);
 
-        return ResponseEntity<>(updateResponse, HttpStatus.OK);
 
         if (newBalan < 0) {
             LOGGER.info("Insufficient balance");
@@ -112,7 +110,7 @@ public class PurchaseController {
             LOGGER.error("Err: " + activityResponse.getStatusCode());
         }
 
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(updateResponse, HttpStatus.OK);
 
     }
 
