@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import ph.apper.account.exception.BalanceInsufficientException;
+import ph.apper.account.exceptions.InvalidAccountRequestException;
 import ph.apper.account.payload.TransferMoneyRequest;
 import ph.apper.account.payload.response.AuthenticateResponse;
 import ph.apper.account.payload.response.TransferMoneyResponse;
@@ -30,7 +31,7 @@ public class TransferController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> transfer(@RequestBody TransferMoneyRequest request) throws BalanceInsufficientException {
+    public ResponseEntity<Object> transfer(@RequestBody TransferMoneyRequest request) throws BalanceInsufficientException, InvalidAccountRequestException {
         TransferMoneyResponse transfer = transferService.transfer(request);
         if (transfer != null) {
             LOGGER.info("NEW MONEY TRANSFER: " + request.getAmount()
