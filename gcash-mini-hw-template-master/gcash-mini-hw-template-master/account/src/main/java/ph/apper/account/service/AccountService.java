@@ -15,6 +15,7 @@ import ph.apper.account.payload.AccountRequest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -48,11 +49,15 @@ public class AccountService {
         return new NewAccountResponse(verificationCode);
     }
 
-    public boolean verify(String email, String verificationCode) throws InvalidAccountRequestException{
-        boolean isVerified = verificationService.verifyAccount(email, verificationCode);
-        if(isVerified)
-            getAccount(email).setVerified(true);
-        return isVerified;
+    public boolean verifyAccount(String email, String verificationCode) throws InvalidAccountRequestException{
+        if(Objects.nonNull(verificationService.getVerificationCode(email))){
+            if(verificationService.getVerificationCode(email).equals(verificationCode)){
+                getAccount(email).setVerified(true);
+                verificationService.invalidateVerificationCode(email);
+                return true;
+            }
+        }
+        return false;
     }
 
     public Account getAccount(String email) throws InvalidAccountRequestException {
