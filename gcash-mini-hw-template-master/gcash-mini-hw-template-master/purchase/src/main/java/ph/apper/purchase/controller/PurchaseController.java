@@ -2,11 +2,14 @@ package ph.apper.purchase.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import ph.apper.account.domain.Account;
+import ph.apper.account.payload.UpdateBalanceRequest;
 import ph.apper.account.payload.response.GetAccountResponse;
+import ph.apper.account.payload.response.UpdateBalanceResponse;
 import ph.apper.activity.payload.Activity;
 import ph.apper.product.controller.ProductController;
 import ph.apper.product.domain.Product;
@@ -78,12 +81,21 @@ public class PurchaseController {
 //            throw new ACCOUNT EXCEPTION HERE
         }
 
-        double newBalance = a.getBalance() - g.getPrice();
-        if (newBalance < 0) {
+        // Update Balance
+        double newBalan = a.getBalance() - g.getPrice();
+        UpdateBalanceRequest newBalance = new UpdateBalanceRequest();
+        newBalance.setNewBalance(newBalan);
+
+        UpdateBalanceResponse updateResponse = restTemplate.patchForObject(accountUrl, newBalance, UpdateBalanceResponse.class);
+//        UpdateBalanceResponse newBal = updateResponse.getBody();
+
+        return ResponseEntity<>(updateResponse, HttpStatus.OK);
+
+        if (newBalan < 0) {
             LOGGER.info("Insufficient balance");
 
         } else {
-            LOGGER.info("New balance: " + newBalance);
+            LOGGER.info("New balance: " + newBalan);
         }
 
         // Send Purchase Activity
