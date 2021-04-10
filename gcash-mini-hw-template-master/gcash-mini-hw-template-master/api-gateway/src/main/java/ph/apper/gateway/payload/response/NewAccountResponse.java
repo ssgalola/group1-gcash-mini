@@ -10,4 +10,7 @@ public class NewAccountResponse {
     }
     @JsonProperty(value = "verificationCode")
     private String verificationCode;
+
+    public NewAccountResponse() {
+    }
 }

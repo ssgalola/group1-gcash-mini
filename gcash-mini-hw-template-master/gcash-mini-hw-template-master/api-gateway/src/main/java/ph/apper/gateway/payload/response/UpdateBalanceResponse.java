@@ -10,4 +10,7 @@ public class UpdateBalanceResponse {
     }
     @JsonProperty(value="new_balance")
     private Double newBalance;
+
+    public UpdateBalanceResponse() {
+    }
 }
