@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ph.apper.account.domain.Account;
+import ph.apper.account.exceptions.InvalidAccountRequestException;
 import ph.apper.account.payload.response.GetAccountResponse;
 import ph.apper.account.payload.response.NewAccountResponse;
 import ph.apper.account.payload.response.UpdateBalanceResponse;
@@ -30,7 +31,7 @@ public class AccountService {
     }
 
     public NewAccountResponse addAccount(AccountRequest request){
-        UUID accountId = IdService.getNextUserId();
+        UUID accountId = idService.getNextUserId();
         LOGGER.info("New account ID: " + accountId);
 
         Account account = new Account(accountId);
@@ -38,10 +39,10 @@ public class AccountService {
         account.setLastName(request.getLastName());
         account.setEmail(request.getEmail());
         account.setPassword(request.getPassword());
-        account.setBalance(Double.parseDouble("25000.00"));
+        account.setBalance(25000.00);
         account.setVerified(false);
 
-        String verificationCode = IdService.generateCode(6);
+        String verificationCode = idService.generateCode(6);
         verificationService.addVerificationCode(request.getEmail(), verificationCode);
         accounts.add(account);
         return new NewAccountResponse(verificationCode);
@@ -54,11 +55,11 @@ public class AccountService {
         return isVerified;
     }
 
-    public Account getAccount(String email){
+    public Account getAccount(String email) throws InvalidAccountRequestException {
         return accounts.stream().filter(account -> email.equals(account.getEmail())).findFirst().get();
     }
 
-    public GetAccountResponse getAccountDetails(String accountId){
+    public GetAccountResponse getAccountDetails(String accountId) throws InvalidAccountRequestException{
         return new GetAccountResponse(
                 accounts.stream().filter(
                         account -> accountId.equals(account.getAccountId().toString())
@@ -66,7 +67,7 @@ public class AccountService {
         );
     }
 
-    public Account getAccountById(String accountId){
+    public Account getAccountById(String accountId) throws InvalidAccountRequestException{
         return accounts.stream().filter(
                         account -> accountId.equals(account.getAccountId().toString())
                 ).findFirst().get();
@@ -78,9 +79,9 @@ public class AccountService {
         ).findFirst().get();
     }
 
-    public UpdateBalanceResponse updateBalance(String accountId, String newBalance){
+    public UpdateBalanceResponse updateBalance(String accountId, Double newBalance) throws InvalidAccountRequestException{
         Account account = getAccountById(accountId);
-        account.setBalance(Double.parseDouble(newBalance));
+        account.setBalance(newBalance);
 
         return new UpdateBalanceResponse(newBalance);
     }
