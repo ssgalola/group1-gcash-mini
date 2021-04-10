@@ -8,6 +8,12 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 public class App {
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(App.class);
         application.addListeners(new ApplicationPidFileWriter());
