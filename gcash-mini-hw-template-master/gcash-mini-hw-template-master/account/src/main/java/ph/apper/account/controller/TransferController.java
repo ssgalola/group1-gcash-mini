@@ -6,17 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import ph.apper.account.exception.BalanceInsufficientException;
+import ph.apper.account.domain.Activity;
 import ph.apper.account.exceptions.InsufficientBalanceException;
 import ph.apper.account.exceptions.InvalidAccountRequestException;
 import ph.apper.account.payload.TransferMoneyRequest;
-import ph.apper.account.payload.response.AuthenticateResponse;
 import ph.apper.account.payload.response.TransferMoneyResponse;
 import ph.apper.account.service.AccountService;
 import ph.apper.account.service.TransferService;
-//import ph.apper.activity.payload.Activity;
 
-import static java.lang.Integer.parseInt;
 
 @RestController
 @RequestMapping("transfer")
