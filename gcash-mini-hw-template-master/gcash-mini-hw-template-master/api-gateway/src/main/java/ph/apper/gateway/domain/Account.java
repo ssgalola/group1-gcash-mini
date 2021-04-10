@@ -1,4 +1,4 @@
-package ph.apper.gateway.payload.domain;
+package ph.apper.gateway.domain;
 
 
 import lombok.Data;
