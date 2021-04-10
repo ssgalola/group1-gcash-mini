@@ -6,16 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import ph.apper.account.exception.BalanceInsufficientException;
+import ph.apper.account.domain.Activity;
+import ph.apper.account.exceptions.InsufficientBalanceException;
 import ph.apper.account.exceptions.InvalidAccountRequestException;
 import ph.apper.account.payload.TransferMoneyRequest;
-import ph.apper.account.payload.response.AuthenticateResponse;
 import ph.apper.account.payload.response.TransferMoneyResponse;
 import ph.apper.account.service.AccountService;
 import ph.apper.account.service.TransferService;
-//import ph.apper.activity.payload.Activity;
 
-import static java.lang.Integer.parseInt;
 
 @RestController
 @RequestMapping("transfer")
@@ -31,27 +29,27 @@ public class TransferController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> transfer(@RequestBody TransferMoneyRequest request) throws BalanceInsufficientException, InvalidAccountRequestException {
+    public ResponseEntity<Object> transfer(@RequestBody TransferMoneyRequest request) throws InvalidAccountRequestException, InsufficientBalanceException {
         TransferMoneyResponse transfer = transferService.transfer(request);
         if (transfer != null) {
             LOGGER.info("NEW MONEY TRANSFER: " + request.getAmount()
                     + " FROM " + request.getFromAccountId()
                     + " TO " + request.getToAccountId());
 
-            //        Activity activity = new Activity();
-            //        activity.setAction("TRANSFER MONEY");
-            //        activity.setIdentifier(response.getTransferId());
-            //        activity.setDetails("NEW MONEY TRANSFER: " + request.getAmount()
-            //                            + " FROM " + request.getFromAccountId()
-            //                            + " TO " + request.getToAccountId());
-            //
-            //        ResponseEntity<Activity[]> activityResponse = restTemplate.postForEntity("http://localhost:8082", activity, Activity[].class);
-            //        if (activityResponse.getStatusCode().is2xxSuccessful()) {
-            //            LOGGER.info("Transfer money activity recorded.");
-            //        }
-            //        else {
-            //            LOGGER.error("Err: " + activityResponse.getStatusCode());
-            //        }
+                    Activity activity = new Activity();
+                    activity.setAction("TRANSFER MONEY");
+                    activity.setIdentifier(transfer.getTransferId());
+                    activity.setDetails("NEW MONEY TRANSFER: " + request.getAmount()
+                                        + " FROM " + request.getFromAccountId()
+                                        + " TO " + request.getToAccountId());
+
+                    ResponseEntity<Activity[]> activityResponse = restTemplate.postForEntity("http://localhost:8082", activity, Activity[].class);
+                    if (activityResponse.getStatusCode().is2xxSuccessful()) {
+                        LOGGER.info("Transfer money activity recorded.");
+                    }
+                    else {
+                        LOGGER.error("Err: " + activityResponse.getStatusCode());
+                    }
             return new ResponseEntity<>("Money transferred successfully!", HttpStatus.OK);
         }
         return new ResponseEntity<>("Insufficient balance.", HttpStatus.FORBIDDEN);
