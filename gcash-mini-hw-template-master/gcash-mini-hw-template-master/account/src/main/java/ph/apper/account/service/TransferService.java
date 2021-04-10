@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ph.apper.account.domain.Transfer;
 import ph.apper.account.exception.BalanceInsufficientException;
+import ph.apper.account.exceptions.InsufficientBalanceException;
 import ph.apper.account.exceptions.InvalidAccountRequestException;
 import ph.apper.account.payload.TransferData;
 import ph.apper.account.payload.TransferMoneyRequest;
@@ -30,7 +31,7 @@ public class TransferService {
         this.accountService = accountService;
     }
 
-    public TransferMoneyResponse transfer(TransferMoneyRequest request) throws BalanceInsufficientException, InvalidAccountRequestException {
+    public TransferMoneyResponse transfer(TransferMoneyRequest request) throws InsufficientBalanceException, InvalidAccountRequestException {
         double senderBalance = accountService.getAccountDetails(request.getFromAccountId()).getBalance();
         double recipientBalance = accountService.getAccountDetails(request.getToAccountId()).getBalance();
 
