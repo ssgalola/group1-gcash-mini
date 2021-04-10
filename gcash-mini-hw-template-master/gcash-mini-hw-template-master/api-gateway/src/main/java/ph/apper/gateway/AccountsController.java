@@ -2,14 +2,14 @@ package ph.apper.gateway;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import ph.apper.gateway.payload.AccountRequest;
 import ph.apper.gateway.payload.Activity;
+import ph.apper.gateway.payload.AddFundsRequest;
+import ph.apper.gateway.payload.response.GetAccountResponse;
 import ph.apper.gateway.payload.response.NewAccountResponse;
+import ph.apper.gateway.payload.response.UpdateBalanceResponse;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,11 +27,36 @@ public class AccountsController {
 
     @PostMapping
     public ResponseEntity<Object> createAccount(@RequestBody AccountRequest request) {
-        ResponseEntity<NewAccountResponse> response = restTemplate.postForEntity(gCashMiniProperties.getAccountsUrl(), request, NewAccountResponse.class);
+
+        ResponseEntity<NewAccountResponse> response = restTemplate.postForEntity(gCashMiniProperties.getAccountsUrl()+"/account/", request, NewAccountResponse.class);
         if (response.getStatusCode().is2xxSuccessful()) {
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
         }
 
+        return ResponseEntity.status(response.getStatusCode()).build();
+    }
+
+    @GetMapping("{accountId}")
+    public ResponseEntity<Object> getAccount(@PathVariable String accountId) {
+        ResponseEntity<GetAccountResponse> response = restTemplate.getForEntity(gCashMiniProperties.getAccountsUrl()+"/account/"+accountId, GetAccountResponse.class);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
+        }
+
+        return ResponseEntity.status(response.getStatusCode()).build();
+    }
+
+    @PostMapping("addFunds")
+    public ResponseEntity<Object> addFunds(@RequestBody AddFundsRequest request) {
+        ResponseEntity<UpdateBalanceResponse> response = restTemplate.
+                postForEntity(gCashMiniProperties.getAccountsUrl()+"/account/addFunds/",
+                                request,
+                                UpdateBalanceResponse.class
+        );
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
+        }
         return ResponseEntity.status(response.getStatusCode()).build();
     }
 
