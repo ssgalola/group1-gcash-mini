@@ -36,20 +36,20 @@ public class TransferController {
                     + " FROM " + request.getFromAccountId()
                     + " TO " + request.getToAccountId());
 
-            //        Activity activity = new Activity();
-            //        activity.setAction("TRANSFER MONEY");
-            //        activity.setIdentifier(response.getTransferId());
-            //        activity.setDetails("NEW MONEY TRANSFER: " + request.getAmount()
-            //                            + " FROM " + request.getFromAccountId()
-            //                            + " TO " + request.getToAccountId());
-            //
-            //        ResponseEntity<Activity[]> activityResponse = restTemplate.postForEntity("http://localhost:8082", activity, Activity[].class);
-            //        if (activityResponse.getStatusCode().is2xxSuccessful()) {
-            //            LOGGER.info("Transfer money activity recorded.");
-            //        }
-            //        else {
-            //            LOGGER.error("Err: " + activityResponse.getStatusCode());
-            //        }
+                    Activity activity = new Activity();
+                    activity.setAction("TRANSFER MONEY");
+                    activity.setIdentifier(transfer.getTransferId());
+                    activity.setDetails("NEW MONEY TRANSFER: " + request.getAmount()
+                                        + " FROM " + request.getFromAccountId()
+                                        + " TO " + request.getToAccountId());
+
+                    ResponseEntity<Activity[]> activityResponse = restTemplate.postForEntity("http://localhost:8082", activity, Activity[].class);
+                    if (activityResponse.getStatusCode().is2xxSuccessful()) {
+                        LOGGER.info("Transfer money activity recorded.");
+                    }
+                    else {
+                        LOGGER.error("Err: " + activityResponse.getStatusCode());
+                    }
             return new ResponseEntity<>("Money transferred successfully!", HttpStatus.OK);
         }
         return new ResponseEntity<>("Insufficient balance.", HttpStatus.FORBIDDEN);
