@@ -13,17 +13,18 @@ import ph.apper.account.payload.GenericResponse;
 public class ServiceExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceExceptionHandler.class);
 
-    @ExceptionHandler({
-            InvalidAccountRequestException.class,
-            InsufficientBalanceException.class
-    })
+    @ExceptionHandler({InsufficientBalanceException.class})
+    public ResponseEntity<GenericResponse> handleTransactionExceptions(Exception e){
+        LOGGER.error("Transaction Failed: Insufficient Balance.");
+        GenericResponse response = new GenericResponse("Insufficient Balance in Account.");
+
+        return ResponseEntity.badRequest().body(response);
+    }
+    @ExceptionHandler({InvalidAccountRequestException.class})
     public ResponseEntity<GenericResponse> handleLogicExceptions(Exception e){
         LOGGER.error("Service Error: ", e);
         GenericResponse response = new GenericResponse(e.getMessage());
 
-        if(e instanceof InvalidAccountRequestException)
-            return ResponseEntity.notFound().build();
-
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.notFound().build();
     }
 }
