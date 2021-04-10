@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import ph.apper.account.domain.Account;
+import ph.apper.account.domain.Activity;
 import ph.apper.account.exceptions.InvalidAccountRequestException;
 import ph.apper.account.payload.*;
 import ph.apper.account.payload.response.AuthenticateResponse;
@@ -13,16 +15,17 @@ import ph.apper.account.payload.response.NewAccountResponse;
 import ph.apper.account.payload.response.UpdateBalanceResponse;
 import ph.apper.account.service.AccountService;
 
-import javax.security.auth.login.AccountNotFoundException;
 
 @RestController
 @RequestMapping("account")
 public class AccountManagementController {
     private static  final Logger LOGGER = LoggerFactory.getLogger(AccountManagementController.class);
+    private final RestTemplate restTemplate;
     private final AccountService accountService;
 
-    public AccountManagementController(AccountService accountService){
+    public AccountManagementController(AccountService accountService, RestTemplate restTemplate){
         this.accountService = accountService;
+        this.restTemplate = restTemplate;
     }
 
     @PostMapping
@@ -30,6 +33,19 @@ public class AccountManagementController {
         LOGGER.info("Create account request received.");
         NewAccountResponse response = accountService.addAccount(request);
         LOGGER.info("Account Created");
+
+        Activity activity = new Activity();
+        activity.setAction("CREATE ACCOUNT");
+        activity.setIdentifier(request.getEmail());
+        activity.setDetails("ACCOUNT CREATED FOR " + request.getEmail());
+        ResponseEntity<Activity[]> activityResponse = postActivity(activity);
+        if (activityResponse.getStatusCode().is2xxSuccessful()) {
+            LOGGER.info("Create account activity recorded.");
+        }
+        else {
+            LOGGER.error("Err: " + activityResponse.getStatusCode());
+        }
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -59,6 +75,20 @@ public class AccountManagementController {
             @RequestBody UpdateBalanceRequest request) throws InvalidAccountRequestException {
         LOGGER.info("Update account balance request received.");
         UpdateBalanceResponse response = accountService.updateBalance(accountId, request.getNewBalance());
+
+        Activity activity = new Activity();
+        activity.setAction("UPDATE BALANCE");
+        activity.setIdentifier(accountId);
+        activity.setDetails("NEW ACCOUNT BALANCE: " + request.getNewBalance());
+
+        ResponseEntity<Activity[]> activityResponse = postActivity(activity);
+        if (activityResponse.getStatusCode().is2xxSuccessful()) {
+            LOGGER.info("Create account activity recorded.");
+        }
+        else {
+            LOGGER.error("Err: " + activityResponse.getStatusCode());
+        }
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -68,7 +98,24 @@ public class AccountManagementController {
         Account account = accountService.getAccountById(request.getAccountId());
         Double updatedBalance = account.getBalance() + request.getAmount();
         UpdateBalanceResponse response = accountService.updateBalance(request.getAccountId(), updatedBalance);
+
+        Activity activity = new Activity();
+        activity.setAction("FUND ACCOUNT");
+        activity.setIdentifier(request.getAccountId());
+        activity.setDetails("NEW BALANCE: " + updatedBalance);
+        ResponseEntity<Activity[]> activityResponse = postActivity(activity);
+        if (activityResponse.getStatusCode().is2xxSuccessful()) {
+            LOGGER.info("Add Fund activity recorded.");
+        }
+        else {
+            LOGGER.error("Err: " + activityResponse.getStatusCode());
+        }
+
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    private ResponseEntity<Activity[]> postActivity(Activity activity){
+        return restTemplate.postForEntity("http://localhost:8082", activity, Activity[].class);
     }
 
 }
