@@ -69,7 +69,7 @@ public class AccountManagementController {
         return new ResponseEntity<>("Invalid email or password.", HttpStatus.FORBIDDEN);
     }
 
-    @PatchMapping("{accountId}")
+    @PostMapping("{accountId}")
     public ResponseEntity<Object> updateBalance(
             @PathVariable("accountId") String accountId,
             @RequestBody UpdateBalanceRequest request) throws InvalidAccountRequestException {
@@ -83,7 +83,7 @@ public class AccountManagementController {
 
         ResponseEntity<Activity[]> activityResponse = postActivity(activity);
         if (activityResponse.getStatusCode().is2xxSuccessful()) {
-            LOGGER.info("Create account activity recorded.");
+            LOGGER.info("Update balance activity recorded.");
         }
         else {
             LOGGER.error("Err: " + activityResponse.getStatusCode());
@@ -92,7 +92,7 @@ public class AccountManagementController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PatchMapping("addFunds")
+    @PostMapping("addFunds")
     public ResponseEntity<Object> addFunds(@RequestBody AddFundsRequest request) throws InvalidAccountRequestException{
         LOGGER.info("Add funds request received");
         Account account = accountService.getAccountById(request.getAccountId());
