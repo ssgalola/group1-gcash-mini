@@ -56,21 +56,27 @@ public class AccountService {
     }
 
     public Account getAccount(String email) throws InvalidAccountRequestException {
-        return accounts.stream().filter(account -> email.equals(account.getEmail())).findFirst().get();
+        return accounts.stream()
+                .filter(account -> email.equals(account.getEmail()))
+                .findFirst()
+                .orElseThrow(() -> new InvalidAccountRequestException("Account not found"));
     }
 
     public GetAccountResponse getAccountDetails(String accountId) throws InvalidAccountRequestException{
         return new GetAccountResponse(
-                accounts.stream().filter(
-                        account -> accountId.equals(account.getAccountId().toString())
-                ).findFirst().get()
+                accounts.stream()
+                        .filter(account -> accountId.equals(account.getAccountId().toString()))
+                        .findFirst()
+                        .orElseThrow(() -> new InvalidAccountRequestException("Account not found"))
         );
     }
 
     public Account getAccountById(String accountId) throws InvalidAccountRequestException{
-        return accounts.stream().filter(
-                        account -> accountId.equals(account.getAccountId().toString())
-                ).findFirst().get();
+        return accounts.stream()
+                .filter(account -> accountId.equals(account.getAccountId().toString()))
+                .findFirst()
+                .orElseThrow(() -> new InvalidAccountRequestException("Account not found"));
+
     }
 
     public Account authenticateAccount(String email, String password){
@@ -82,7 +88,6 @@ public class AccountService {
     public UpdateBalanceResponse updateBalance(String accountId, Double newBalance) throws InvalidAccountRequestException{
         Account account = getAccountById(accountId);
         account.setBalance(newBalance);
-
         return new UpdateBalanceResponse(newBalance);
     }
 
