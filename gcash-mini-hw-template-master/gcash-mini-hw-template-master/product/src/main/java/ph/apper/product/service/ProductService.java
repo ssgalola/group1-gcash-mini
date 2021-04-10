@@ -39,7 +39,7 @@ public class ProductService {
         product.setPrice(request.getPrice());
         products.add(product);
 
-        LOGGER.info("Product: {}", product);
+        LOGGER.info("{}", product);
 
         return new AddProductResponse(productId);
     }
