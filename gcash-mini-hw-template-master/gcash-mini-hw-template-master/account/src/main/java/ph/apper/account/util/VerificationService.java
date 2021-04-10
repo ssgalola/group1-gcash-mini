@@ -13,16 +13,12 @@ public class VerificationService {
         verificationCodes.put(email, code);
     }
 
-    public void verifyAccount(String email){
-        verificationCodes.remove(email);
+    public boolean verifyAccount(String email, String code){
+        if(verificationCodes.get(email).equals(code)){
+            verificationCodes.remove(email);
+            return true;
+        }
+        return false;
     }
 
-    public boolean verifyAccount(String email, String code){
-        boolean isVerified;
-        isVerified = verificationCodes.entrySet().stream().anyMatch(
-                entry -> email.equals(entry.getKey()) && code.equals(entry.getKey())
-        );
-        verificationCodes.remove(email);
-        return isVerified;
-    }
 }

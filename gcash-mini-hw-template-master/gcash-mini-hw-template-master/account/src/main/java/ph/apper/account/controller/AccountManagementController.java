@@ -40,7 +40,7 @@ public class AccountManagementController {
 
     @PostMapping("verify")
     public ResponseEntity<Object> verifyAccount(@RequestBody VerifyAccountRequest request){
-        if(accountService.verifyAccount(request.getVerificationCode(), request.getEmail()))
+        if(accountService.verify(request.getVerificationCode(), request.getEmail()))
             return new ResponseEntity<>(HttpStatus.OK);
         return new ResponseEntity<>("Invalid email or verification code.", HttpStatus.NOT_FOUND);
     }

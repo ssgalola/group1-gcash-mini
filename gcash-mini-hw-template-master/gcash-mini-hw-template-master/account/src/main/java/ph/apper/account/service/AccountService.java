@@ -47,9 +47,11 @@ public class AccountService {
         return new NewAccountResponse(verificationCode);
     }
 
-    public void verify(String email){
-        verificationService.verifyAccount(email);
-        getAccount(email).setVerified(true);
+    public boolean verify(String email, String verificationCode){
+        boolean isVerified = verificationService.verifyAccount(email, verificationCode);
+        if(isVerified)
+            getAccount(email).setVerified(true);
+        return isVerified;
     }
 
     public Account getAccount(String email){
@@ -68,10 +70,6 @@ public class AccountService {
         return accounts.stream().filter(
                         account -> accountId.equals(account.getAccountId().toString())
                 ).findFirst().get();
-    }
-
-    public boolean verifyAccount(String verificationCode, String email){
-        return verificationService.verifyAccount(email, verificationCode);
     }
 
     public Account authenticateAccount(String email, String password){
