@@ -62,14 +62,12 @@ public class AccountManagementController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PatchMapping("addFunds/{accountId}")
-    public ResponseEntity<Object> addFunds(
-            @PathVariable("accountId") String accountId,
-            @RequestBody AddFundsRequest request) throws InvalidAccountRequestException{
+    @PatchMapping("addFunds")
+    public ResponseEntity<Object> addFunds(@RequestBody AddFundsRequest request) throws InvalidAccountRequestException{
         LOGGER.info("Add funds request received");
-        Account account = accountService.getAccountById(accountId);
+        Account account = accountService.getAccountById(request.getAccountId());
         Double updatedBalance = account.getBalance() + request.getAmount();
-        UpdateBalanceResponse response = accountService.updateBalance(accountId, updatedBalance);
+        UpdateBalanceResponse response = accountService.updateBalance(request.getAccountId(), updatedBalance);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
