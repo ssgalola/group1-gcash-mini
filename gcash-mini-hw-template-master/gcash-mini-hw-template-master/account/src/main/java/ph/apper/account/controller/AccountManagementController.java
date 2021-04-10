@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ph.apper.account.domain.Account;
+import ph.apper.account.exceptions.InvalidAccountRequestException;
 import ph.apper.account.payload.AccountRequest;
 import ph.apper.account.payload.AuthenticateAccountRequest;
 import ph.apper.account.payload.UpdateBalanceRequest;
@@ -14,6 +15,8 @@ import ph.apper.account.payload.response.AuthenticateResponse;
 import ph.apper.account.payload.response.NewAccountResponse;
 import ph.apper.account.payload.response.UpdateBalanceResponse;
 import ph.apper.account.service.AccountService;
+
+import javax.security.auth.login.AccountNotFoundException;
 
 @RestController
 @RequestMapping("account")
@@ -34,7 +37,7 @@ public class AccountManagementController {
     }
 
     @GetMapping("{accountId}")
-    public ResponseEntity<Object> getAccount(@PathVariable("accountId") String accountId){
+    public ResponseEntity<Object> getAccount(@PathVariable("accountId") String accountId) throws InvalidAccountRequestException {
         return new ResponseEntity<>(accountService.getAccountDetails(accountId), HttpStatus.OK);
     }
 
@@ -56,7 +59,7 @@ public class AccountManagementController {
     @PatchMapping("{accountId}")
     public ResponseEntity<Object> updateBalance(
             @PathVariable("accountId") String accountId,
-            @RequestBody UpdateBalanceRequest request){
+            @RequestBody UpdateBalanceRequest request) throws InvalidAccountRequestException {
         LOGGER.info("Update account balance request received.");
         UpdateBalanceResponse response = accountService.updateBalance(accountId, request.getNewBalance());
         return new ResponseEntity<>(response, HttpStatus.OK);
