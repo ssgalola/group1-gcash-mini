@@ -1,2 +1,4 @@
-package ph.apper.purchase.exception;public class PurchaseException {
+package ph.apper.purchase.exception;
+
+public class PurchaseException {
 }
