@@ -54,8 +54,10 @@ public class TransferService {
             LOGGER.info("Transfer: {}", transfer);
 
             return new TransferMoneyResponse(transferId);
+        }else{
+            throw new InsufficientBalanceException("Insufficient Balance.");
         }
-        return null;
+
     }
 
     public List<TransferData> getAllTransfers() {
