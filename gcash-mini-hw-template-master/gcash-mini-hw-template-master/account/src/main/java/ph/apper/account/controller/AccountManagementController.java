@@ -50,15 +50,15 @@ public class AccountManagementController {
     @PostMapping("verify")
     public ResponseEntity<Object> verifyAccount(@RequestBody VerifyAccountRequest request) throws InvalidAccountRequestException{
         Activity activity = new Activity();
-        activity.setAction("Verify Account");
+        activity.setAction("VERIFICATION");
         activity.setIdentifier(request.getEmail());
 
         if(accountService.verifyAccount(request.getEmail(), request.getVerificationCode())) {
-            activity.setDetails("Account verified");
+            activity.setDetails("ACCOUNT VERIFIED:"+request.getEmail());
             activityService.postActivity(activity);
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        activity.setDetails("Invalid email or verification code.");
+        activity.setDetails("ACCOUNT UNVERIFIED:"+request.getEmail());
         activityService.postActivity(activity);
         return new ResponseEntity<>("Invalid email or verification code.", HttpStatus.NOT_FOUND);
     }
@@ -68,15 +68,15 @@ public class AccountManagementController {
         Account account = accountService.authenticateAccount(request.getEmail(), request.getPassword());
 
         Activity activity = new Activity();
-        activity.setAction("Authenticate Account");
+        activity.setAction("AUTHENTICATION");
         activity.setIdentifier(account.getEmail());
 
         if(account != null){
-            activity.setDetails("Correct email and password combination.");
+            activity.setDetails("ACCOUNT AUTHENTICATED:"+account.getEmail());
             activityService.postActivity(activity);
             return new ResponseEntity<>(new AuthenticateResponse(account), HttpStatus.OK);
         }
-        activity.setDetails("Invalid email and password combination.");
+        activity.setDetails("ACCOUNT UNAUTHENTICATED:"+account.getEmail());
         activityService.postActivity(activity);
         return new ResponseEntity<>("Invalid email or password.", HttpStatus.FORBIDDEN);
     }
