@@ -2,7 +2,8 @@ package ph.apper.purchase.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -11,23 +12,21 @@ import ph.apper.account.payload.UpdateBalanceRequest;
 import ph.apper.account.payload.response.GetAccountResponse;
 import ph.apper.account.payload.response.UpdateBalanceResponse;
 import ph.apper.activity.payload.Activity;
-import ph.apper.product.controller.ProductController;
 import ph.apper.product.domain.Product;
 import ph.apper.product.exception.ProductNotFoundException;
-import ph.apper.product.payload.AddProduct;
-import ph.apper.product.payload.AddProductResponse;
 import ph.apper.product.payload.GetProductResponse;
+import ph.apper.purchase.App;
 import ph.apper.purchase.payload.PurchaseData;
-
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping("purchase")
 public class PurchaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseController.class);
-
     private final RestTemplate restTemplate;
+
+    @Autowired
+    private Environment env;
 
     public PurchaseController(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -40,9 +39,9 @@ public class PurchaseController {
 
         // PRODUCT
         purchase.setProductId(request.getProductId());
-        String url = "http://localhost:8083/product/" + request.getProductId();
 
-        ResponseEntity<GetProductResponse> productResponse = restTemplate.getForEntity(url, GetProductResponse.class);
+        ResponseEntity<GetProductResponse> productResponse
+                = restTemplate.getForEntity(env.getProperty("gcash.mini.productUrl") + request.getProductId(), GetProductResponse.class);
         GetProductResponse g = productResponse.getBody();
 
         if (productResponse.getStatusCode().is2xxSuccessful()) {
@@ -61,9 +60,9 @@ public class PurchaseController {
 
         // ACCOUNT
         purchase.setAccountId(request.getAccountId());
-        String accountUrl = "http://localhost:8081/account/" + request.getAccountId();
 
-        ResponseEntity<GetAccountResponse> accountResponse = restTemplate.getForEntity(accountUrl, GetAccountResponse.class);
+        ResponseEntity<GetAccountResponse> accountResponse
+                = restTemplate.getForEntity(env.getProperty("gcash.mini.accountUrl") + request.getAccountId(), GetAccountResponse.class);
         GetAccountResponse a = accountResponse.getBody();
 
         if (accountResponse.getStatusCode().is2xxSuccessful()) {
@@ -78,31 +77,34 @@ public class PurchaseController {
 
         } else {
             LOGGER.error("Err: " + accountResponse.getStatusCode());
-//            throw new ACCOUNT EXCEPTION HERE
+//            throw new InvalidAccountRequestException();
         }
 
         // Update Balance
-        double newBalan = a.getBalance() - g.getPrice();
+        double newBal = a.getBalance() - g.getPrice();
         UpdateBalanceRequest newBalance = new UpdateBalanceRequest();
-        newBalance.setNewBalance(newBalan);
+        newBalance.setNewBalance(newBal);
 
-        UpdateBalanceResponse updateResponse = restTemplate.postForObject(accountUrl, newBalance, UpdateBalanceResponse.class);
+        UpdateBalanceResponse updateResponse
+                = restTemplate.postForObject(env.getProperty("gcash.mini.accountUrl") + request.getAccountId(), newBalance, UpdateBalanceResponse.class);
 
 
-        if (newBalan < 0) {
+        if (newBal < 0) {
             LOGGER.info("Insufficient balance");
+//            throw new InsufficientBalanceException();
 
         } else {
-            LOGGER.info("New balance: " + newBalan);
+            LOGGER.info("New balance: " + newBal);
         }
 
         // Send Purchase Activity
         Activity activity = new Activity();
         activity.setAction("PURCHASE");
-        activity.setIdentifier("Product ID: " + request.getProductId() + ", Account ID: " + request.getAccountId());
-        activity.setDetails("NEW BALANCE: " + newBalance);
+        activity.setIdentifier(String.valueOf(request.getAccountId()));
+        activity.setDetails("PURCHASED: " + request.getProductId());
 
-        ResponseEntity<Activity[]> activityResponse = restTemplate.postForEntity("http://localhost:8082", activity, Activity[].class);
+        ResponseEntity<Activity[]> activityResponse
+                = restTemplate.postForEntity(env.getProperty("gcash.mini.activityUrl"), activity, Activity[].class);
         if (activityResponse.getStatusCode().is2xxSuccessful()) {
             LOGGER.info("Purchase activity recorded");
         }
@@ -110,7 +112,8 @@ public class PurchaseController {
             LOGGER.error("Err: " + activityResponse.getStatusCode());
         }
 
-        return new ResponseEntity<>(updateResponse, HttpStatus.OK);
+        return ResponseEntity.ok().build();
+//        return new ResponseEntity<>(updateResponse, HttpStatus.OK);
 
     }
 
