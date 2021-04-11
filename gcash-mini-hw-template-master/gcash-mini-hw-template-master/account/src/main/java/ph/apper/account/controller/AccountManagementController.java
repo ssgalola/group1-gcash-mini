@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import ph.apper.account.App;
 import ph.apper.account.domain.Account;
 import ph.apper.account.domain.Activity;
 import ph.apper.account.exceptions.InvalidAccountRequestException;
@@ -22,10 +23,15 @@ public class AccountManagementController {
     private static  final Logger LOGGER = LoggerFactory.getLogger(AccountManagementController.class);
     private final RestTemplate restTemplate;
     private final AccountService accountService;
+    private final App.GCashMiniProperties gCashMiniProperties;
 
-    public AccountManagementController(AccountService accountService, RestTemplate restTemplate){
+    public AccountManagementController(
+            AccountService accountService,
+            RestTemplate restTemplate,
+            App.GCashMiniProperties gCashMiniProperties){
         this.accountService = accountService;
         this.restTemplate = restTemplate;
+        this.gCashMiniProperties = gCashMiniProperties;
     }
 
     @PostMapping
@@ -115,7 +121,10 @@ public class AccountManagementController {
     }
 
     private ResponseEntity<Activity[]> postActivity(Activity activity){
-        return restTemplate.postForEntity("http://localhost:8082", activity, Activity[].class);
+
+        String url = gCashMiniProperties.getActivityUrl();
+        System.out.println(url);
+        return restTemplate.postForEntity(url, activity, Activity[].class);
     }
 
 }
