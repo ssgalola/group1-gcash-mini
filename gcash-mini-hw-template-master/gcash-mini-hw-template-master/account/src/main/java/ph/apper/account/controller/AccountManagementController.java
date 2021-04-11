@@ -16,6 +16,8 @@ import ph.apper.account.payload.response.UpdateBalanceResponse;
 import ph.apper.account.service.AccountService;
 import ph.apper.account.util.ActivityService;
 
+import java.util.Objects;
+
 
 @RestController
 @RequestMapping("account")
@@ -59,16 +61,35 @@ public class AccountManagementController {
 
     @PostMapping("verify")
     public ResponseEntity<Object> verifyAccount(@RequestBody VerifyAccountRequest request) throws InvalidAccountRequestException{
-        if(accountService.verifyAccount(request.getEmail(), request.getVerificationCode()))
+        Activity activity = new Activity();
+        activity.setAction("Verify Account");
+        activity.setIdentifier(request.getEmail());
+
+        if(accountService.verifyAccount(request.getEmail(), request.getVerificationCode())) {
+            activity.setDetails("Account verified");
+            activityService.postActivity(activity);
             return new ResponseEntity<>(HttpStatus.OK);
+        }
+        activity.setDetails("Invalid email or verification code.");
+        activityService.postActivity(activity);
         return new ResponseEntity<>("Invalid email or verification code.", HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("authenticate")
     public ResponseEntity<Object> authenticateAccount(@RequestBody AuthenticateAccountRequest request){
         Account account = accountService.authenticateAccount(request.getEmail(), request.getPassword());
-        if(account != null)
+
+        Activity activity = new Activity();
+        activity.setAction("Authenticate Account");
+        activity.setIdentifier(account.getEmail());
+
+        if(account != null){
+            activity.setDetails("Correct email and password combination.");
+            activityService.postActivity(activity);
             return new ResponseEntity<>(new AuthenticateResponse(account), HttpStatus.OK);
+        }
+        activity.setDetails("Invalid email and password combination.");
+        activityService.postActivity(activity);
         return new ResponseEntity<>("Invalid email or password.", HttpStatus.FORBIDDEN);
     }
 
