@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import ph.apper.account.domain.Account;
 import ph.apper.account.domain.Activity;
 import ph.apper.account.exceptions.InvalidAccountRequestException;
@@ -16,20 +15,15 @@ import ph.apper.account.payload.response.UpdateBalanceResponse;
 import ph.apper.account.service.AccountService;
 import ph.apper.account.util.ActivityService;
 
-import java.util.Objects;
-
-
 @RestController
 @RequestMapping("account")
 public class AccountManagementController {
     private static  final Logger LOGGER = LoggerFactory.getLogger(AccountManagementController.class);
-    private final RestTemplate restTemplate;
     private final AccountService accountService;
     private final ActivityService activityService;
 
-    public AccountManagementController(AccountService accountService, RestTemplate restTemplate, ActivityService activityService){
+    public AccountManagementController(AccountService accountService, ActivityService activityService){
         this.accountService = accountService;
-        this.restTemplate = restTemplate;
         this.activityService = activityService;
     }
 
@@ -40,16 +34,10 @@ public class AccountManagementController {
         LOGGER.info("Account Created");
 
         Activity activity = new Activity();
-        activity.setAction("CREATE ACCOUNT");
+        activity.setAction("REGISTRATION");
         activity.setIdentifier(request.getEmail());
-        activity.setDetails("ACCOUNT CREATED FOR " + request.getEmail());
-        ResponseEntity<Activity[]> activityResponse = postActivity(activity);
-        if (activityResponse.getStatusCode().is2xxSuccessful()) {
-            LOGGER.info("Create account activity recorded.");
-        }
-        else {
-            LOGGER.error("Err: " + activityResponse.getStatusCode());
-        }
+        activity.setDetails("NEW ACCOUNT CREATED: " + request.getEmail());
+        activityService.postActivity(activity);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -105,14 +93,7 @@ public class AccountManagementController {
         activity.setIdentifier(accountId);
         activity.setDetails("NEW ACCOUNT BALANCE: " + request.getNewBalance());
 
-        ResponseEntity<Activity[]> activityResponse = postActivity(activity);
-        if (activityResponse.getStatusCode().is2xxSuccessful()) {
-            LOGGER.info("Update balance activity recorded.");
-        }
-        else {
-            LOGGER.error("Err: " + activityResponse.getStatusCode());
-        }
-
+        activityService.postActivity(activity);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -124,23 +105,13 @@ public class AccountManagementController {
         UpdateBalanceResponse response = accountService.updateBalance(request.getAccountId(), updatedBalance);
 
         Activity activity = new Activity();
-        activity.setAction("FUND ACCOUNT");
+        activity.setAction("ADD FUND");
         activity.setIdentifier(request.getAccountId());
         activity.setDetails("NEW BALANCE: " + updatedBalance);
-        ResponseEntity<Activity[]> activityResponse = postActivity(activity);
-        if (activityResponse.getStatusCode().is2xxSuccessful()) {
-            LOGGER.info("Add Fund activity recorded.");
-        }
-        else {
-            LOGGER.error("Err: " + activityResponse.getStatusCode());
-        }
-
+        activityService.postActivity(activity);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private ResponseEntity<Activity[]> postActivity(Activity activity){
-        return restTemplate.postForEntity("http://localhost:8082", activity, Activity[].class);
-    }
 
 }
 
