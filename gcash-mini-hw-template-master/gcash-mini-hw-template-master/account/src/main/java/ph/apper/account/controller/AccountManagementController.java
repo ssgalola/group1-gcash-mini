@@ -14,6 +14,7 @@ import ph.apper.account.payload.response.AuthenticateResponse;
 import ph.apper.account.payload.response.NewAccountResponse;
 import ph.apper.account.payload.response.UpdateBalanceResponse;
 import ph.apper.account.service.AccountService;
+import ph.apper.account.util.ActivityService;
 
 
 @RestController
@@ -22,10 +23,12 @@ public class AccountManagementController {
     private static  final Logger LOGGER = LoggerFactory.getLogger(AccountManagementController.class);
     private final RestTemplate restTemplate;
     private final AccountService accountService;
+    private final ActivityService activityService;
 
-    public AccountManagementController(AccountService accountService, RestTemplate restTemplate){
+    public AccountManagementController(AccountService accountService, RestTemplate restTemplate, ActivityService activityService){
         this.accountService = accountService;
         this.restTemplate = restTemplate;
+        this.activityService = activityService;
     }
 
     @PostMapping
