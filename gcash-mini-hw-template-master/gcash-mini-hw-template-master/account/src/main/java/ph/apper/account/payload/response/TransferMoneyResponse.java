@@ -12,4 +12,8 @@ public class TransferMoneyResponse {
 
     @JsonProperty("transfer_id")
     private String transferId;
+
+    public TransferMoneyResponse(){
+
+    }
 }

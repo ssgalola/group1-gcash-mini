@@ -14,4 +14,7 @@ public class AuthenticateResponse {
 
     @JsonProperty(value = "accountId")
     private UUID accountId;
+
+    public AuthenticateResponse() {
+    }
 }
