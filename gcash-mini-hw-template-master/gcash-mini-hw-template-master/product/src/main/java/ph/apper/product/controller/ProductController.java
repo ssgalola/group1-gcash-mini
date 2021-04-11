@@ -5,12 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import ph.apper.activity.payload.Activity;
+import ph.apper.product.App;
 import ph.apper.product.exception.ProductNotFoundException;
-import ph.apper.product.payload.AddProduct;
-import ph.apper.product.payload.AddProductResponse;
-import ph.apper.product.payload.GetProductResponse;
-import ph.apper.product.payload.ProductData;
+import ph.apper.product.payload.*;
 import ph.apper.product.service.ProductService;
 
 import javax.validation.Valid;
@@ -25,10 +22,12 @@ public class ProductController {
 
     private final RestTemplate restTemplate;
     private final ProductService productService;
+    private final App.GCashMiniProperties gCashMiniProperties;
 
-    public ProductController(RestTemplate restTemplate, ProductService productService) {
+    public ProductController(RestTemplate restTemplate, ProductService productService, App.GCashMiniProperties gCashMiniProperties) {
         this.restTemplate = restTemplate;
         this.productService = productService;
+        this.gCashMiniProperties = gCashMiniProperties;
     }
 
     @GetMapping
@@ -54,7 +53,7 @@ public class ProductController {
         activity.setIdentifier(response.getProductId());
         activity.setDetails("NEW PRODUCT ADDED: " + request.getName());
 
-        ResponseEntity<Activity[]> activityResponse = restTemplate.postForEntity("http://localhost:8082", activity, Activity[].class);
+        ResponseEntity<Activity[]> activityResponse = restTemplate.postForEntity(gCashMiniProperties.getActivityUrl(), activity, Activity[].class);
         if (activityResponse.getStatusCode().is2xxSuccessful()) {
             LOGGER.info("Add product activity recorded.");
         }
