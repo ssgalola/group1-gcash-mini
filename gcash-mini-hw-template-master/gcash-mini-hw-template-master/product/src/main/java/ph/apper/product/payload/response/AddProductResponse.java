@@ -10,6 +10,9 @@ public class AddProductResponse {
         this.productId = productId;
     }
 
+    public AddProductResponse() {
+    }
+
     @JsonProperty("product_id")
     private String productId;
 }
