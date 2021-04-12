@@ -6,10 +6,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class AddFundsRequest {
+public class TransferRequest {
+    @NotBlank (message = "Sender ID is required")
+    private String fromAccountId;
 
-    @NotBlank (message = "Account ID is required")
-    private String accountId;
+    @NotBlank (message = "Recipient ID is required")
+    private String toAccountId;
 
     @NotNull (message = "Amount is required")
     private Double amount;

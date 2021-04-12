@@ -1,4 +1,4 @@
-package ph.apper.gateway.payload;
+package ph.apper.purchase.payload.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

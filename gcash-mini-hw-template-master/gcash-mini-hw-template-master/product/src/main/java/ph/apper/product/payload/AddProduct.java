@@ -10,6 +10,6 @@ public class AddProduct {
     @NotBlank(message = "Name is required")
     private String name;
 
-    @NotNull
+    @NotNull(message = "Price is required")
     private Double price;
 }

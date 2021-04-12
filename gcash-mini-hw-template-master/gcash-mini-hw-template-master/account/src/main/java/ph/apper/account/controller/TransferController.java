@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import ph.apper.account.domain.Activity;
 import ph.apper.account.exceptions.InsufficientBalanceException;
 import ph.apper.account.exceptions.InvalidAccountRequestException;
-import ph.apper.account.payload.TransferMoneyRequest;
-import ph.apper.account.payload.response.TransferMoneyResponse;
+import ph.apper.account.payload.TransferRequest;
+import ph.apper.account.payload.response.TransferResponse;
+import ph.apper.account.service.AccountService;
 import ph.apper.account.service.TransferService;
 import ph.apper.account.util.ActivityService;
 
@@ -21,28 +22,51 @@ public class TransferController {
 
     private final TransferService transferService;
     private final ActivityService activityService;
+    private final AccountService accountService;
 
-    public TransferController(TransferService transferService, ActivityService activityService) {
+    public TransferController(TransferService transferService, ActivityService activityService, AccountService accountService) {
         this.transferService = transferService;
         this.activityService = activityService;
+        this.accountService = accountService;
     }
 
     @PostMapping
-    public ResponseEntity<Object> transfer(@RequestBody TransferMoneyRequest request) throws InvalidAccountRequestException, InsufficientBalanceException {
+    public ResponseEntity<Object> transfer(@RequestBody TransferRequest request) throws InvalidAccountRequestException, InsufficientBalanceException {
         LOGGER.info("Money Transfer request received");
-        TransferMoneyResponse transfer = transferService.transfer(request);
 
-        if (transfer != null) {
+        double senderBalance = accountService.getAccountDetails(request.getFromAccountId()).getBalance();
+        double recipientBalance = accountService.getAccountDetails(request.getToAccountId()).getBalance();
+
+        if (senderBalance >= request.getAmount()) {
+            TransferResponse response = transferService.transfer(request);
+
             Activity activity = new Activity();
             activity.setAction("TRANSFER MONEY");
-            activity.setIdentifier(transfer.getTransferId());
+            activity.setIdentifier(response.getTransferId());
             activity.setDetails("NEW MONEY TRANSFER: " + request.getAmount() +
                                 " FROM " + request.getFromAccountId() +
                                 " TO " + request.getToAccountId());
             activityService.postActivity(activity);
-            return new ResponseEntity<>("Money transferred successfully!", HttpStatus.OK);
+
+            Double newSenderBalance = senderBalance - request.getAmount();
+            accountService.updateBalance(request.getFromAccountId(), newSenderBalance);
+            Activity updateSenderBalance = new Activity();
+            updateSenderBalance.setAction("UPDATE BALANCE");
+            updateSenderBalance.setIdentifier(request.getFromAccountId());
+            updateSenderBalance.setDetails("NEW ACCOUNT BALANCE: " + newSenderBalance);
+            activityService.postActivity(updateSenderBalance);
+
+            Double newRecipientBalance = recipientBalance + request.getAmount();
+            accountService.updateBalance(request.getToAccountId(), newRecipientBalance);
+            Activity updateRecipientBalance = new Activity();
+            updateRecipientBalance.setAction("UPDATE BALANCE");
+            updateRecipientBalance.setIdentifier(request.getToAccountId());
+            updateRecipientBalance.setDetails("NEW ACCOUNT BALANCE: " + newRecipientBalance);
+            activityService.postActivity(updateRecipientBalance);
+
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>("Insufficient balance.", HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
 }

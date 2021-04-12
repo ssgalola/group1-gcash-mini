@@ -1,4 +1,4 @@
-package ph.apper.purchase.payload;
+package ph.apper.gateway.payload;
 
 import lombok.Data;
 
