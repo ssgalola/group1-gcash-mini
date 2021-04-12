@@ -5,8 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ph.apper.account.exceptions.InsufficientBalanceException;
-import ph.apper.account.exceptions.InvalidAccountRequestException;
+import ph.apper.account.exceptions.*;
 import ph.apper.account.payload.response.GenericResponse;
 
 @ControllerAdvice
@@ -20,7 +19,11 @@ public class ServiceExceptionHandler {
 
         return ResponseEntity.badRequest().body(response);
     }
-    @ExceptionHandler({InvalidAccountRequestException.class})
+    @ExceptionHandler({
+            InvalidAccountRequestException.class,
+            InvalidLoginException.class,
+            InvalidVerificationRequestException.class,
+            InvalidUserRegistrationException.class})
     public ResponseEntity<GenericResponse> handleLogicExceptions(Exception e){
         LOGGER.error("Service Error: ", e);
         GenericResponse response = new GenericResponse(e.getMessage());

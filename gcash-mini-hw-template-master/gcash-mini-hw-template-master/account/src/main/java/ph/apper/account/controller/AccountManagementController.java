@@ -8,27 +8,32 @@ import org.springframework.web.bind.annotation.*;
 import ph.apper.account.domain.Account;
 import ph.apper.account.domain.Activity;
 import ph.apper.account.exceptions.InvalidAccountRequestException;
+import ph.apper.account.exceptions.InvalidLoginException;
+import ph.apper.account.exceptions.InvalidUserRegistrationException;
+import ph.apper.account.exceptions.InvalidVerificationRequestException;
 import ph.apper.account.payload.*;
 import ph.apper.account.payload.response.AuthenticateResponse;
 import ph.apper.account.payload.response.NewAccountResponse;
 import ph.apper.account.payload.response.UpdateBalanceResponse;
 import ph.apper.account.service.AccountService;
+import ph.apper.account.service.AccountServiceInterface;
 import ph.apper.account.util.ActivityService;
 
 @RestController
+@CrossOrigin
 @RequestMapping("account")
 public class AccountManagementController {
     private static  final Logger LOGGER = LoggerFactory.getLogger(AccountManagementController.class);
-    private final AccountService accountService;
+    private final AccountServiceInterface accountService;
     private final ActivityService activityService;
 
-    public AccountManagementController(AccountService accountService, ActivityService activityService){
+    public AccountManagementController(AccountServiceInterface accountService, ActivityService activityService){
         this.accountService = accountService;
         this.activityService = activityService;
     }
 
     @PostMapping
-    public ResponseEntity<Object> createAccount(@RequestBody AccountRequest request){
+    public ResponseEntity<Object> createAccount(@RequestBody AccountRequest request) throws InvalidUserRegistrationException {
         LOGGER.info("Create account request received.");
         NewAccountResponse response = accountService.addAccount(request);
         LOGGER.info("Account Created");
@@ -48,7 +53,7 @@ public class AccountManagementController {
     }
 
     @PostMapping("verify")
-    public ResponseEntity<Object> verifyAccount(@RequestBody VerifyAccountRequest request) throws InvalidAccountRequestException{
+    public ResponseEntity<Object> verifyAccount(@RequestBody VerifyAccountRequest request) throws InvalidVerificationRequestException {
         Activity activity = new Activity();
         activity.setAction("VERIFICATION");
         activity.setIdentifier(request.getEmail());
@@ -64,7 +69,7 @@ public class AccountManagementController {
     }
 
     @PostMapping("authenticate")
-    public ResponseEntity<Object> authenticateAccount(@RequestBody AuthenticateAccountRequest request){
+    public ResponseEntity<Object> authenticateAccount(@RequestBody AuthenticateAccountRequest request) throws InvalidLoginException {
         Account account = accountService.authenticateAccount(request.getEmail(), request.getPassword());
 
         Activity activity = new Activity();
