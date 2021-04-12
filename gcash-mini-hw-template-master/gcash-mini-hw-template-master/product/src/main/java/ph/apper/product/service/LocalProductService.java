@@ -8,8 +8,7 @@ import ph.apper.product.payload.AddProduct;
 import ph.apper.product.exception.ProductNotFoundException;
 import ph.apper.product.payload.response.AddProductResponse;
 import ph.apper.product.domain.Product;
-import ph.apper.product.payload.response.GetProductResponse;
-import ph.apper.product.payload.ProductData;
+import ph.apper.product.payload.response.ProductData;
 import ph.apper.product.util.IdService;
 
 import java.util.ArrayList;
