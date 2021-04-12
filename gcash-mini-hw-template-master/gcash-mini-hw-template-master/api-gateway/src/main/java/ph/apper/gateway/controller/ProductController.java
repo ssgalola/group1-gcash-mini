@@ -6,14 +6,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ph.apper.gateway.App;
-import ph.apper.gateway.domain.Product;
 import ph.apper.gateway.payload.AddProduct;
 import ph.apper.gateway.payload.ProductData;
 import ph.apper.gateway.payload.response.AddProductResponse;
 import ph.apper.gateway.payload.response.GetProductResponse;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("product")
