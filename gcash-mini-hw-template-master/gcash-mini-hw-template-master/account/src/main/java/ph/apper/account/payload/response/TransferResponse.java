@@ -4,16 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class TransferMoneyResponse {
+public class TransferResponse {
 
-    public TransferMoneyResponse(String transferId) {
+    public TransferResponse(String transferId) {
         this.transferId = transferId;
     }
 
     @JsonProperty("transfer_id")
     private String transferId;
 
-    public TransferMoneyResponse(){
+    public TransferResponse(){
 
     }
 }

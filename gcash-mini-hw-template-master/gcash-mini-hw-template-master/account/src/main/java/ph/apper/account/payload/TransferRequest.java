@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class TransferMoneyRequest {
+public class TransferRequest {
     @NotBlank(message = "Sender ID is required")
     private String fromAccountId;
 

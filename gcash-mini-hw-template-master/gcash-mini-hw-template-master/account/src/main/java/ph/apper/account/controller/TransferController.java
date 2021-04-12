@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import ph.apper.account.domain.Activity;
 import ph.apper.account.exceptions.InsufficientBalanceException;
 import ph.apper.account.exceptions.InvalidAccountRequestException;
-import ph.apper.account.payload.TransferMoneyRequest;
-import ph.apper.account.payload.response.TransferMoneyResponse;
+import ph.apper.account.payload.TransferRequest;
+import ph.apper.account.payload.response.TransferResponse;
 import ph.apper.account.service.AccountService;
 import ph.apper.account.service.TransferService;
 import ph.apper.account.util.ActivityService;
@@ -31,14 +31,14 @@ public class TransferController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> transfer(@RequestBody TransferMoneyRequest request) throws InvalidAccountRequestException, InsufficientBalanceException {
+    public ResponseEntity<Object> transfer(@RequestBody TransferRequest request) throws InvalidAccountRequestException, InsufficientBalanceException {
         LOGGER.info("Money Transfer request received");
 
         double senderBalance = accountService.getAccountDetails(request.getFromAccountId()).getBalance();
         double recipientBalance = accountService.getAccountDetails(request.getToAccountId()).getBalance();
 
         if (senderBalance >= request.getAmount()) {
-            TransferMoneyResponse transfer = transferService.transfer(request);
+            TransferResponse transfer = transferService.transfer(request);
 
             Activity activity = new Activity();
             activity.setAction("TRANSFER MONEY");
@@ -64,9 +64,9 @@ public class TransferController {
             updateRecipientBalance.setDetails("NEW ACCOUNT BALANCE: " + newRecipientBalance);
             activityService.postActivity(updateRecipientBalance);
 
-            return new ResponseEntity<>("Money transferred successfully!", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>("Insufficient balance.", HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
 }
