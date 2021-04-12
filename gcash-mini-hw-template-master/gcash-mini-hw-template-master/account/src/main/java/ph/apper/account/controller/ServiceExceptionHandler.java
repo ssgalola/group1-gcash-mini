@@ -7,16 +7,17 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ph.apper.account.exceptions.InsufficientBalanceException;
 import ph.apper.account.exceptions.InvalidAccountRequestException;
+import ph.apper.account.exceptions.InvalidLoginException;
+import ph.apper.account.exceptions.InvalidVerificationCodeException;
 import ph.apper.account.payload.response.GenericResponse;
 
 @ControllerAdvice
 public class ServiceExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceExceptionHandler.class);
 
-    @ExceptionHandler({InsufficientBalanceException.class})
+    @ExceptionHandler({InsufficientBalanceException.class, InvalidLoginException.class, InvalidVerificationCodeException.class})
     public ResponseEntity<GenericResponse> handleTransactionExceptions(Exception e){
-        LOGGER.error("Transaction Failed: Insufficient Balance.");
-        GenericResponse response = new GenericResponse("Insufficient Balance in Account.");
+        GenericResponse response = new GenericResponse(e.getMessage());
 
         return ResponseEntity.badRequest().body(response);
     }

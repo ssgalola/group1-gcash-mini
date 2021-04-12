@@ -9,6 +9,7 @@ import ph.apper.account.domain.Account;
 import ph.apper.account.domain.Activity;
 import ph.apper.account.exceptions.InvalidAccountRequestException;
 import ph.apper.account.exceptions.InvalidLoginException;
+import ph.apper.account.exceptions.InvalidVerificationCodeException;
 import ph.apper.account.payload.*;
 import ph.apper.account.payload.response.AuthenticateResponse;
 import ph.apper.account.payload.response.NewAccountResponse;
@@ -51,7 +52,7 @@ public class AccountManagementController {
     }
 
     @PostMapping("verify")
-    public ResponseEntity<Object> verifyAccount(@RequestBody VerifyAccountRequest request) throws InvalidAccountRequestException{
+    public ResponseEntity<Object> verifyAccount(@RequestBody VerifyAccountRequest request) throws InvalidAccountRequestException, InvalidVerificationCodeException {
         Activity activity = new Activity();
         activity.setAction("VERIFICATION");
         activity.setIdentifier(request.getEmail());
@@ -61,27 +62,19 @@ public class AccountManagementController {
             activityService.postActivity(activity);
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        activity.setDetails("ACCOUNT UNVERIFIED:"+request.getEmail());
-        activityService.postActivity(activity);
         return new ResponseEntity<>("Invalid email or verification code.", HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("authenticate")
-    public ResponseEntity<Object> authenticateAccount(@RequestBody AuthenticateAccountRequest request) throws InvalidLoginException {
+    public ResponseEntity<Object> authenticateAccount(@RequestBody AuthenticateAccountRequest request) throws InvalidLoginException, InvalidAccountRequestException {
         Account account = accountService.authenticateAccount(request.getEmail(), request.getPassword());
-
         Activity activity = new Activity();
         activity.setAction("AUTHENTICATION");
         activity.setIdentifier(account.getEmail());
 
-        if(account != null){
-            activity.setDetails("ACCOUNT AUTHENTICATED:"+account.getEmail());
-            activityService.postActivity(activity);
-            return new ResponseEntity<>(new AuthenticateResponse(account), HttpStatus.OK);
-        }
-        activity.setDetails("ACCOUNT UNAUTHENTICATED:"+account.getEmail());
+        activity.setDetails("ACCOUNT AUTHENTICATED:"+account.getEmail());
         activityService.postActivity(activity);
-        return new ResponseEntity<>("Invalid email or password.", HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(new AuthenticateResponse(account), HttpStatus.OK);
     }
 
     @PostMapping("{accountId}")

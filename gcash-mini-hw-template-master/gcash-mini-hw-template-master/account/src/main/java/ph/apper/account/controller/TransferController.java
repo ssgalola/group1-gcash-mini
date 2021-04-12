@@ -66,7 +66,7 @@ public class TransferController {
 
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        throw new InsufficientBalanceException("Insufficient Balance in Account.");
     }
 
 }

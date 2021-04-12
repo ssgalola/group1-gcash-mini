@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ph.apper.gateway.payload.TransferRequest;
 import ph.apper.gateway.App;
@@ -25,7 +26,7 @@ public class TransferController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> transfer(@RequestBody TransferRequest request) {
+    public ResponseEntity<Object> transfer(@RequestBody TransferRequest request) throws HttpClientErrorException {
         ResponseEntity<TransferResponse> response = restTemplate.postForEntity(
                 gCashMiniProperties.getTransferUrl(), request, TransferResponse.class);
         if (response.getStatusCode().is2xxSuccessful()) {
