@@ -3,6 +3,7 @@ package ph.apper.gateway.payload;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.xml.transform.sax.SAXResult;
 import java.util.UUID;
 
 @Data
@@ -12,6 +13,6 @@ public class PurchaseRequest {
     private String productId;
 
     @NotBlank (message = "Account ID is required")
-    private UUID accountId;
+    private String accountId;
 
 }
