@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ph.apper.gateway.App;
 import ph.apper.gateway.payload.PurchaseRequest;
@@ -24,15 +25,15 @@ public class PurchaseController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> purchase(@RequestBody PurchaseRequest request) {
+    public ResponseEntity<Object> purchase(@RequestBody PurchaseRequest request) throws HttpClientErrorException {
         ResponseEntity response = restTemplate.postForEntity(gCashMiniProperties.getPurchaseUrl(), request, ResponseEntity.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
             return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
         }
-        if (response.getStatusCode().is4xxClientError()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+//        if (response.getStatusCode().is4xxClientError()) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
 
         return ResponseEntity.status(response.getStatusCode()).build();
     }

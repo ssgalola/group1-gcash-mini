@@ -3,6 +3,7 @@ package ph.apper.purchase.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -10,6 +11,7 @@ import ph.apper.purchase.App;
 import ph.apper.purchase.domain.Account;
 import ph.apper.purchase.domain.Activity;
 import ph.apper.purchase.domain.Product;
+import ph.apper.purchase.exception.InsufficientBalanceException;
 import ph.apper.purchase.exception.ProductNotFoundException;
 import ph.apper.purchase.payload.PurchaseRequest;
 import ph.apper.purchase.payload.UpdateBalanceRequest;
@@ -31,7 +33,7 @@ public class PurchaseController {
     }
 
     @PostMapping
-    public ResponseEntity purchase(@RequestBody PurchaseRequest request) throws ProductNotFoundException, HttpClientErrorException {
+    public ResponseEntity purchase(@RequestBody PurchaseRequest request) throws ProductNotFoundException, HttpClientErrorException, InsufficientBalanceException, HttpMessageNotReadableException {
         LOGGER.info(String.valueOf(request));
 
         ResponseEntity<ProductData> productResponse = restTemplate.getForEntity(gCashMiniProperties.getProductUrl() + request.getProductId(), ProductData.class);
@@ -80,7 +82,7 @@ public class PurchaseController {
         updateBalanceRequest.setNewBalance(newBalance);
 
         if (newBalance < 0) {
-            LOGGER.info("Insufficient balance"); // throw InsufficientBalanceException
+            throw new InsufficientBalanceException("Insufficient Balance.");
         } else {
             ResponseEntity<UpdateBalanceResponse> updateResponse = restTemplate.postForEntity(gCashMiniProperties.getAccountUrl() + request.getAccountId(), updateBalanceRequest, UpdateBalanceResponse.class);
             if (updateResponse.getStatusCode().is2xxSuccessful()) {
