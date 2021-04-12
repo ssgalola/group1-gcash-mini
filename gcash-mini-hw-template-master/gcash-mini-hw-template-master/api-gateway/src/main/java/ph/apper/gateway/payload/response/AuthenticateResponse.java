@@ -1,8 +1,8 @@
-package ph.apper.account.payload.response;
+package ph.apper.gateway.payload.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import ph.apper.account.domain.Account;
+import ph.apper.gateway.domain.Account;
 
 import java.util.UUID;
 
