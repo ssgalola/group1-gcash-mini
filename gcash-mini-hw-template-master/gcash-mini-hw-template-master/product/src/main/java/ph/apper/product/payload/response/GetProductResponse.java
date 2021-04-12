@@ -1,4 +1,4 @@
-package ph.apper.product.payload;
+package ph.apper.product.payload.response;
 
 import lombok.Data;
 

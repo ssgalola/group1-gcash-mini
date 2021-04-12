@@ -1,10 +1,11 @@
-package ph.apper.gateway;
+package ph.apper.gateway.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import ph.apper.gateway.App;
 import ph.apper.gateway.payload.Activity;
 
 import java.util.Arrays;

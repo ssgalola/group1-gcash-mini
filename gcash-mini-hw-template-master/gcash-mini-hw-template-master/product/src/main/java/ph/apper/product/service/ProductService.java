@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ph.apper.product.payload.AddProduct;
 import ph.apper.product.exception.ProductNotFoundException;
-import ph.apper.product.payload.AddProductResponse;
+import ph.apper.product.payload.response.AddProductResponse;
 import ph.apper.product.domain.Product;
-import ph.apper.product.payload.GetProductResponse;
+import ph.apper.product.payload.response.GetProductResponse;
 import ph.apper.product.payload.ProductData;
 import ph.apper.product.util.IdService;
 

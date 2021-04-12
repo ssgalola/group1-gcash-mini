@@ -8,10 +8,12 @@ import org.springframework.web.client.RestTemplate;
 import ph.apper.product.App;
 import ph.apper.product.exception.ProductNotFoundException;
 import ph.apper.product.payload.*;
+import ph.apper.product.payload.response.AddProductResponse;
+import ph.apper.product.payload.response.GetProductResponse;
 import ph.apper.product.service.ProductService;
+import ph.apper.product.util.ActivityService;
 
 import javax.validation.Valid;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -22,11 +24,13 @@ public class ProductController {
 
     private final RestTemplate restTemplate;
     private final ProductService productService;
+    private final ActivityService activityService;
     private final App.GCashMiniProperties gCashMiniProperties;
 
-    public ProductController(RestTemplate restTemplate, ProductService productService, App.GCashMiniProperties gCashMiniProperties) {
+    public ProductController(RestTemplate restTemplate, ProductService productService, ActivityService activityService, App.GCashMiniProperties gCashMiniProperties) {
         this.restTemplate = restTemplate;
         this.productService = productService;
+        this.activityService = activityService;
         this.gCashMiniProperties = gCashMiniProperties;
     }
 
@@ -52,14 +56,7 @@ public class ProductController {
         activity.setAction("ADD PRODUCT");
         activity.setIdentifier(response.getProductId());
         activity.setDetails("NEW PRODUCT ADDED: " + request.getName());
-
-        ResponseEntity<Activity[]> activityResponse = restTemplate.postForEntity(gCashMiniProperties.getActivityUrl(), activity, Activity[].class);
-        if (activityResponse.getStatusCode().is2xxSuccessful()) {
-            LOGGER.info("Add product activity recorded.");
-        }
-        else {
-            LOGGER.error("Err: " + activityResponse.getStatusCode());
-        }
+        activityService.postActivity(activity);
 
         return ResponseEntity.ok(response);
     }
