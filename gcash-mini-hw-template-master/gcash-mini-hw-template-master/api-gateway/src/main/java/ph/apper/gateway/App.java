@@ -30,5 +30,6 @@ public class App {
         private String accountUrl;
         private String purchaseUrl;
         private String productUrl;
+        private String transferUrl;
     }
 }
