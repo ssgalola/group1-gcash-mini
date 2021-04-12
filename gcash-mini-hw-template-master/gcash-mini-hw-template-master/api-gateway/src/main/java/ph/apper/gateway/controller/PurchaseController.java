@@ -1,6 +1,5 @@
 package ph.apper.gateway.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import ph.apper.gateway.App;
-import ph.apper.gateway.payload.PurchaseData;
-import ph.apper.gateway.payload.response.GetProductResponse;
+import ph.apper.gateway.payload.PurchaseRequest;
 
 @RestController
 @RequestMapping("purchase")
@@ -25,13 +23,9 @@ public class PurchaseController {
         this.gCashMiniProperties = gCashMiniProperties;
     }
 
-
     @PostMapping
-    public ResponseEntity<Object> purchase(@RequestBody PurchaseData request) {
-        PurchaseData purchase = new PurchaseData();
-
-        ResponseEntity response
-                = restTemplate.postForEntity(gCashMiniProperties.getPurchaseUrl(), request, ResponseEntity.class);
+    public ResponseEntity<Object> purchase(@RequestBody PurchaseRequest request) {
+        ResponseEntity response = restTemplate.postForEntity(gCashMiniProperties.getPurchaseUrl(), request, ResponseEntity.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
             return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
@@ -41,11 +35,6 @@ public class PurchaseController {
         }
 
         return ResponseEntity.status(response.getStatusCode()).build();
-
-
-//        return ResponseEntity.ok().build();
-//        return new ResponseEntity<>(updateResponse, HttpStatus.OK);
-
     }
 
 }

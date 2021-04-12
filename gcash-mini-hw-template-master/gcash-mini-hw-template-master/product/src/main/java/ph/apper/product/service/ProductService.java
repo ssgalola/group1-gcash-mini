@@ -7,8 +7,7 @@ import ph.apper.product.payload.AddProduct;
 import ph.apper.product.exception.ProductNotFoundException;
 import ph.apper.product.payload.response.AddProductResponse;
 import ph.apper.product.domain.Product;
-import ph.apper.product.payload.response.GetProductResponse;
-import ph.apper.product.payload.ProductData;
+import ph.apper.product.payload.response.ProductData;
 import ph.apper.product.util.IdService;
 
 import java.util.ArrayList;
@@ -53,21 +52,17 @@ public class ProductService {
         return productDataList;
     }
 
+    public ProductData getProduct(String id) throws ProductNotFoundException {
+        Product product = getProductById(id);
+
+        return toProductData(product);
+    }
+
     private Product getProductById(String id) throws ProductNotFoundException {
         return products.stream()
                 .filter(product -> id.equals(product.getProductId()))
                 .findFirst()
                 .orElseThrow(() -> new ProductNotFoundException("Product " + id + " not found"));
-    }
-
-    public GetProductResponse getProduct(String id) throws ProductNotFoundException {
-        Product product = getProductById(id);
-
-        GetProductResponse response = new GetProductResponse();
-        response.setName(product.getName());
-        response.setPrice(product.getPrice());
-
-        return response;
     }
 
     private ProductData toProductData (Product p) {

@@ -9,7 +9,7 @@ import ph.apper.product.App;
 import ph.apper.product.exception.ProductNotFoundException;
 import ph.apper.product.payload.*;
 import ph.apper.product.payload.response.AddProductResponse;
-import ph.apper.product.payload.response.GetProductResponse;
+import ph.apper.product.payload.response.ProductData;
 import ph.apper.product.service.ProductService;
 import ph.apper.product.util.ActivityService;
 
@@ -40,8 +40,8 @@ public class ProductController {
     }
 
     @GetMapping("{productId}")
-    public ResponseEntity<GetProductResponse> getProduct(@PathVariable("productId") String productId) throws ProductNotFoundException {
-        GetProductResponse response = productService.getProduct(productId);
+    public ResponseEntity<ProductData> getProduct(@PathVariable("productId") String productId) throws ProductNotFoundException {
+        ProductData response = productService.getProduct(productId);
 
         return ResponseEntity.ok(response);
     }
