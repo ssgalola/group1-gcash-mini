@@ -17,9 +17,7 @@ public class Account {
     private Double balance;
     private boolean isVerified;
 
-    private LocalDateTime dateRegistered;
     private LocalDateTime dateVerified;
-    private LocalDateTime lastLogin;
 
     public Account(UUID accountId){
         this.accountId = accountId;
