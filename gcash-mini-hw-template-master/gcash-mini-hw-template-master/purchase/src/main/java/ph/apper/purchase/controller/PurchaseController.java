@@ -14,8 +14,7 @@ import ph.apper.account.payload.response.UpdateBalanceResponse;
 import ph.apper.activity.payload.Activity;
 import ph.apper.product.domain.Product;
 import ph.apper.product.exception.ProductNotFoundException;
-import ph.apper.product.payload.GetProductResponse;
-import ph.apper.purchase.App;
+import ph.apper.purchase.payload.ProductData;
 import ph.apper.purchase.payload.PurchaseData;
 
 @RestController
@@ -40,9 +39,9 @@ public class PurchaseController {
         // PRODUCT
         purchase.setProductId(request.getProductId());
 
-        ResponseEntity<GetProductResponse> productResponse
-                = restTemplate.getForEntity(env.getProperty("gcash.mini.productUrl") + request.getProductId(), GetProductResponse.class);
-        GetProductResponse g = productResponse.getBody();
+        ResponseEntity<ProductData> productResponse
+                = restTemplate.getForEntity(env.getProperty("gcash.mini.productUrl") + request.getProductId(), ProductData.class);
+        ProductData g = productResponse.getBody();
 
         if (productResponse.getStatusCode().is2xxSuccessful()) {
             LOGGER.info("Success");

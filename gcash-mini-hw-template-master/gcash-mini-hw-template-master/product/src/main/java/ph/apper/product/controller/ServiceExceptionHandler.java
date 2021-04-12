@@ -8,13 +8,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import ph.apper.product.exception.ProductNotFoundException;
 import ph.apper.product.payload.response.GenericResponse;
 
+import java.util.NoSuchElementException;
+
 @ControllerAdvice
 public class ServiceExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceExceptionHandler.class);
 
-    @ExceptionHandler({ProductNotFoundException.class})
+    @ExceptionHandler({ProductNotFoundException.class, NoSuchElementException.class})
     public ResponseEntity<GenericResponse> handleProductExceptions(Exception e){
+        LOGGER.error("Product Not Found");
         LOGGER.error("Service Error: ", e);
         GenericResponse response = new GenericResponse(e.getMessage());
 

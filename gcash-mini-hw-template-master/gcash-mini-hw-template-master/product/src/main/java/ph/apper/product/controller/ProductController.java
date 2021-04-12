@@ -9,7 +9,6 @@ import ph.apper.product.App;
 import ph.apper.product.exception.ProductNotFoundException;
 import ph.apper.product.payload.*;
 import ph.apper.product.payload.response.AddProductResponse;
-import ph.apper.product.payload.response.GetProductResponse;
 import ph.apper.product.service.ProductService;
 import ph.apper.product.util.ActivityService;
 
@@ -17,20 +16,21 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("product")
 public class ProductController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductController.class);
 
     private final RestTemplate restTemplate;
-    private final ProductService productService;
     private final ActivityService activityService;
+    private final ProductService productService;
     private final App.GCashMiniProperties gCashMiniProperties;
 
     public ProductController(RestTemplate restTemplate, ProductService productService, ActivityService activityService, App.GCashMiniProperties gCashMiniProperties) {
         this.restTemplate = restTemplate;
-        this.productService = productService;
         this.activityService = activityService;
+        this.productService = productService;
         this.gCashMiniProperties = gCashMiniProperties;
     }
 
@@ -40,8 +40,8 @@ public class ProductController {
     }
 
     @GetMapping("{productId}")
-    public ResponseEntity<GetProductResponse> getProduct(@PathVariable("productId") String productId) throws ProductNotFoundException {
-        GetProductResponse response = productService.getProduct(productId);
+    public ResponseEntity<ProductData> getProduct(@PathVariable("productId") String productId) throws ProductNotFoundException {
+        ProductData response = productService.getProduct(productId);
 
         return ResponseEntity.ok(response);
     }
