@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ph.apper.purchase.App;
 import ph.apper.purchase.domain.Account;
 import ph.apper.purchase.domain.Activity;
 import ph.apper.purchase.domain.Product;
+import ph.apper.purchase.exception.InvalidAccountRequestException;
 import ph.apper.purchase.exception.ProductNotFoundException;
 import ph.apper.purchase.payload.GetProductResponse;
 import ph.apper.purchase.payload.PurchaseData;
@@ -33,7 +35,7 @@ public class PurchaseController {
     }
 
     @PostMapping
-    public ResponseEntity purchase(@RequestBody PurchaseData request) throws ProductNotFoundException {
+    public ResponseEntity purchase(@RequestBody PurchaseData request) throws ProductNotFoundException, HttpClientErrorException {
         LOGGER.info(String.valueOf(request));
         PurchaseData purchase = new PurchaseData();
 
