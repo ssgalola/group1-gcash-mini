@@ -27,6 +27,8 @@ public class App {
     @ConfigurationProperties(prefix = "gcash.mini")
     public static class GCashMiniProperties {
         private String activityUrl;
+        private String accountUrl;
+        private String purchaseUrl;
         private String productUrl;
     }
 }
