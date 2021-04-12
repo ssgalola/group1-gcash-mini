@@ -10,6 +10,7 @@ public class PurchaseRequest {
 
     @NotBlank(message = "Product ID is required")
     private String productId;
+
     @NotBlank (message = "Account ID is required")
     private UUID accountId;
 
