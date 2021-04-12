@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ph.apper.account.exceptions.InsufficientBalanceException;
 import ph.apper.account.exceptions.InvalidAccountRequestException;
-import ph.apper.account.payload.GenericResponse;
+import ph.apper.account.payload.response.GenericResponse;
 
 @ControllerAdvice
 public class ServiceExceptionHandler {
