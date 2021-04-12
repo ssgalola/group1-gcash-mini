@@ -3,13 +3,17 @@ package ph.apper.account.domain;
 
 import lombok.Data;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
+@Entity
 public class Account {
-    private UUID accountId;
+    @Id
+    private String accountId;
     private String firstName;
     private String lastName;
     private String email;
@@ -21,7 +25,7 @@ public class Account {
     private LocalDateTime dateVerified;
     private LocalDateTime lastLogin;
 
-    public Account(UUID accountId){
+    public Account(String accountId){
         this.accountId = accountId;
     }
 

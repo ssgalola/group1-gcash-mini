@@ -13,7 +13,7 @@ public class AuthenticateResponse {
     }
 
     @JsonProperty(value = "accountId")
-    private UUID accountId;
+    private String accountId;
 
     public AuthenticateResponse() {
     }

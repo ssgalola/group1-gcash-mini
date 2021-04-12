@@ -35,7 +35,7 @@ public class AccountService {
         UUID accountId = idService.getNextUserId();
         LOGGER.info("New account ID: " + accountId);
 
-        Account account = new Account(accountId);
+        Account account = new Account(accountId.toString());
         account.setFirstName(request.getFirstName());
         account.setLastName(request.getLastName());
         account.setEmail(request.getEmail());
