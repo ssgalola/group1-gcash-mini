@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ph.apper.account.exceptions.InsufficientBalanceException;
-import ph.apper.account.exceptions.InvalidAccountRequestException;
-import ph.apper.account.payload.response.GenericResponse;
+import ph.apper.purchase.exception.InsufficientBalanceException;
+import ph.apper.purchase.exception.InvalidAccountRequestException;
+import ph.apper.purchase.payload.response.GenericResponse;
 
 @ControllerAdvice
 public class ServiceExceptionHandler {
