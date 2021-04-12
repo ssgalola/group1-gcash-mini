@@ -22,7 +22,7 @@ public class ActivityService {
     public void postActivity(Activity activity){
         ResponseEntity<Activity[]> activityResponse = restTemplate.postForEntity(gCashMiniProperties.getActivityUrl(),activity, Activity[].class);
         if (activityResponse.getStatusCode().is2xxSuccessful()) {
-            LOGGER.info(activity.getAction() + " activity with" + activity.getIdentifier() + " identifier has been"  + " recorded.");
+            LOGGER.info(activity.getAction() + " activity with " + activity.getIdentifier() + " identifier has been"  + " recorded.");
         }
         else {
             LOGGER.error("Err: " + activityResponse.getStatusCode());

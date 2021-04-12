@@ -25,7 +25,7 @@ public class TransferService {
     }
 
     public TransferResponse transfer(TransferRequest request) {
-        String transferId = IdService.generateCode(6);
+        String transferId = idService.generateCode(6);
         LOGGER.info("Generated transfer ID: {}", transferId);
 
         Transfer transfer = new Transfer(transferId);
@@ -35,7 +35,7 @@ public class TransferService {
         transfer.setAmount(request.getAmount());
         transfers.add(transfer);
 
-        LOGGER.info("Transfer: {}", transfer);
+        LOGGER.info("{}", transfer);
 
         return new TransferResponse(transferId);
     }

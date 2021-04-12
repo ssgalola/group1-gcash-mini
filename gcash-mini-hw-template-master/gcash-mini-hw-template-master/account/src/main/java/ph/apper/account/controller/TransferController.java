@@ -38,17 +38,17 @@ public class TransferController {
         double recipientBalance = accountService.getAccountDetails(request.getToAccountId()).getBalance();
 
         if (senderBalance >= request.getAmount()) {
-            TransferResponse transfer = transferService.transfer(request);
+            TransferResponse response = transferService.transfer(request);
 
             Activity activity = new Activity();
             activity.setAction("TRANSFER MONEY");
-            activity.setIdentifier(transfer.getTransferId());
+            activity.setIdentifier(response.getTransferId());
             activity.setDetails("NEW MONEY TRANSFER: " + request.getAmount() +
                                 " FROM " + request.getFromAccountId() +
                                 " TO " + request.getToAccountId());
             activityService.postActivity(activity);
 
-            double newSenderBalance = senderBalance - request.getAmount();
+            Double newSenderBalance = senderBalance - request.getAmount();
             accountService.updateBalance(request.getFromAccountId(), newSenderBalance);
             Activity updateSenderBalance = new Activity();
             updateSenderBalance.setAction("UPDATE BALANCE");
@@ -56,7 +56,7 @@ public class TransferController {
             updateSenderBalance.setDetails("NEW ACCOUNT BALANCE: " + newSenderBalance);
             activityService.postActivity(updateSenderBalance);
 
-            double newRecipientBalance = recipientBalance + request.getAmount();
+            Double newRecipientBalance = recipientBalance + request.getAmount();
             accountService.updateBalance(request.getToAccountId(), newRecipientBalance);
             Activity updateRecipientBalance = new Activity();
             updateRecipientBalance.setAction("UPDATE BALANCE");

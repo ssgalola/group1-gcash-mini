@@ -23,6 +23,7 @@ public class AccountService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
 
     private final List<Account> accounts = new ArrayList<>();
+
     private final IdService idService;
     private final VerificationService verificationService;
 
@@ -40,7 +41,7 @@ public class AccountService {
         account.setLastName(request.getLastName());
         account.setEmail(request.getEmail());
         account.setPassword(request.getPassword());
-        account.setBalance(25000.00);
+        account.setBalance(25000.00); // default value of accounts
         account.setVerified(false);
 
         String verificationCode = idService.generateCode(6);
