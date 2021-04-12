@@ -8,12 +8,15 @@ import org.springframework.web.bind.annotation.*;
 import ph.apper.account.domain.Account;
 import ph.apper.account.domain.Activity;
 import ph.apper.account.exceptions.InvalidAccountRequestException;
+import ph.apper.account.exceptions.InvalidLoginException;
 import ph.apper.account.payload.*;
 import ph.apper.account.payload.response.AuthenticateResponse;
 import ph.apper.account.payload.response.NewAccountResponse;
 import ph.apper.account.payload.response.UpdateBalanceResponse;
 import ph.apper.account.service.AccountService;
 import ph.apper.account.util.ActivityService;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("account")
@@ -28,7 +31,7 @@ public class AccountManagementController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createAccount(@RequestBody AccountRequest request){
+    public ResponseEntity<Object> createAccount(@Valid @RequestBody AccountRequest request){
         LOGGER.info("Create account request received.");
         NewAccountResponse response = accountService.addAccount(request);
         LOGGER.info("Account Created");
@@ -64,7 +67,7 @@ public class AccountManagementController {
     }
 
     @PostMapping("authenticate")
-    public ResponseEntity<Object> authenticateAccount(@RequestBody AuthenticateAccountRequest request){
+    public ResponseEntity<Object> authenticateAccount(@RequestBody AuthenticateAccountRequest request) throws InvalidLoginException {
         Account account = accountService.authenticateAccount(request.getEmail(), request.getPassword());
 
         Activity activity = new Activity();
