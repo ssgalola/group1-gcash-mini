@@ -3,6 +3,7 @@ package ph.apper.gateway.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ph.apper.gateway.App;
 import ph.apper.gateway.domain.Product;
@@ -38,7 +39,7 @@ public class ProductController {
     }
 
     @GetMapping("{productId}")
-    public ResponseEntity<Object> getProduct(@PathVariable("productId") String productId) {
+    public ResponseEntity<Object> getProduct(@PathVariable("productId") String productId) throws HttpClientErrorException {
         String productUrl = "/" + productId;
         ResponseEntity<GetProductResponse> response = restTemplate.getForEntity(gCashMiniProperties.getProductUrl() + productUrl, GetProductResponse.class);
         if (response.getStatusCode().is2xxSuccessful()) {
