@@ -21,13 +21,13 @@ public class ActivityService {
     private final App.GCashMiniProperties gCashMiniProperties;
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final AmazonSQS amazonSQS;
-    private final App.SqsProperties sqsProperties;
 
-    public ActivityService(RestTemplate restTemplate, App.GCashMiniProperties gCashMiniProperties, AmazonSQS amazonSQS, App.SqsProperties sqsProperties) {
+
+    public ActivityService(RestTemplate restTemplate, App.GCashMiniProperties gCashMiniProperties, AmazonSQS amazonSQS) {
         this.restTemplate = restTemplate;
         this.gCashMiniProperties = gCashMiniProperties;
         this.amazonSQS = amazonSQS;
-        this.sqsProperties = sqsProperties;
+
     }
 
     @Deprecated
@@ -44,7 +44,7 @@ public class ActivityService {
 
     public void submitActivity(Activity activity) throws JsonProcessingException {
         String message = OBJECT_MAPPER.writeValueAsString(activity);
-        SendMessageRequest sendMessageRequest = new SendMessageRequest(sqsProperties.getQueueUrl(), message);
+        SendMessageRequest sendMessageRequest = new SendMessageRequest(gCashMiniProperties.getQueueUrl(), message);
         amazonSQS.sendMessage(sendMessageRequest);
     }
 }
