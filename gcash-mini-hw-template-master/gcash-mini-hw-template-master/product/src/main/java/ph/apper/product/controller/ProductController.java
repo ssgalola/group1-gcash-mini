@@ -1,5 +1,6 @@
 package ph.apper.product.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +48,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<AddProductResponse> add(@Valid @RequestBody AddProduct request) {
+    public ResponseEntity<AddProductResponse> add(@Valid @RequestBody AddProduct request) throws JsonProcessingException {
         AddProductResponse response = productService.add(request);
 
         LOGGER.info("NEW PRODUCT ADDED: {}", request.getName());
@@ -56,7 +57,7 @@ public class ProductController {
         activity.setAction("ADD PRODUCT");
         activity.setIdentifier(response.getProductId());
         activity.setDetails("NEW PRODUCT ADDED: " + request.getName());
-        activityService.postActivity(activity);
+        activityService.submitActivity(activity);
 
         return ResponseEntity.ok(response);
     }
