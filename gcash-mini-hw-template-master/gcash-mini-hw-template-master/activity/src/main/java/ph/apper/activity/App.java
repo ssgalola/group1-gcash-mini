@@ -12,8 +12,15 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import ph.apper.activity.payload.Activity;
 
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 @SpringBootApplication
@@ -28,7 +35,12 @@ public class App {
     }
 
     @Bean
-    public CommandLineRunner pollSqs(@Value("https://sqs.ap-southeast-1.amazonaws.com/305262579855/group1-gcash-mini") String queueUrl, AmazonSQS amazonSQS) {
+    public List<Activity> activities(){
+        return new ArrayList<Activity>();
+    }
+
+    @Bean
+    public CommandLineRunner pollSqs(@Value("https://sqs.ap-southeast-1.amazonaws.com/305262579855/group1-gcash-mini") String queueUrl, AmazonSQS amazonSQS, List<Activity> activities) {
         return new CommandLineRunner() {
             @Override
             public void run(String... args) throws Exception {
@@ -42,10 +54,9 @@ public class App {
                         @SneakyThrows
                         @Override
                         public void accept(Message message) {
-                            System.out.println(message.getBody());
-
                             Activity activity = OBJECT_MAPPER.readValue(message.getBody(), Activity.class);
                             System.out.println(activity);
+                            activities.add(activity);
 
                             amazonSQS.deleteMessage(queueUrl, message.getReceiptHandle());
                         }

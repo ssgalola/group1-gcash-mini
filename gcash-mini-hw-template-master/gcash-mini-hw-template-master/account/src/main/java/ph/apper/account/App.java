@@ -27,11 +27,9 @@ public class App {
     @ConfigurationProperties(prefix = "gcash.mini")
     public static class GCashMiniProperties {
         private String activityUrl;
-    }
-
-    @Data
-    @ConfigurationProperties("sqs")
-    public static class SqsProperties {
         private String queueUrl;
     }
+
+
+
 }
