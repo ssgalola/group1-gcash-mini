@@ -54,6 +54,33 @@ resource "aws_route_table_association" "public-rt-assoc"{
     route_table_id = aws_route_table.public-rt.id
 }
 
+resource "aws_eip" "eip"{
+  vpc = true
+  tags = {
+    Name = "G1-EIP"
+  }
+}
+
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.eip.id
+  subnet_id = aws_subnet.public_subnet.id
+  tags = {
+    Name = "g1-nat"
+  }
+}
+
+resource "aws_route_table" "natRt" {
+  vpc_id = aws_vpc.vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.nat.id
+  }
+}
+
+resource "aws_route_table_association" "nat-rt-assoc"{
+  subnet_id = aws_subnet.private_subnet.id
+  route_table_id = aws_route_table.natRt.id
+}
 resource "aws_key_pair" "keypair" {
   key_name = "gcashMiniG1"
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDbmtFAVP5LYqgTGwwxsQl0surYlWIlJvWR8SG/E6p73T9Z6LJuJ0esIGLDB0DL8L2azFRrEJCo1GpM4oHkTa2QJG2bKHYfjx+D+kfDhv8Mn2wS/JbsBau4wcpo/kVU5atqGCRwTjfR9yCYU2GsmtTgJtS6jAI1AiLQMNDjXNt+P++6tQL3Kxp/RQYWyZP7UqStxB+CjaRmFY0nweyJIBGctZbsV2+nNHOuLBv3A7N5G0xW4gNBodYJM/vMTCERevup0HffEOeImEQ9aNmLatzUNhMEP1lZylNFP41LIeHikKzqNHSYXnFCJR7NR8LiQJ/ISWZaeoBR5CaXo9o17d0dqoCEUwHVcgXw5YbrsP42fkjVEgDZq0lYldT2dHcozJXQbHaMQ508PiUSAkWbMt3uf9IKBkjs1cNwooBwfDH+jMSogp0HRzdzmMArxr/hlxXn1vA5inAz0ZkOM9d98mjXjU9DgPorLY0PWlwmgp32RXfukJckhsXgM4UE1WFkmS8= johnashly@johnashly-mynt"
@@ -318,6 +345,7 @@ chmod +x /home/ec2-user/boot-ctl.sh
 }
 
 resource "aws_iam_role" "s3_role" {
+  name = "G1_ec2Role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -336,27 +364,32 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {
-  name = "G1-S3instanceProfile"
+  name = "G1-instanceProfile"
   role = aws_iam_role.s3_role.name
 }
 resource "aws_iam_role_policy" "s3_policy" {
-  name = "g1-s3_policy"
+  name = "g1-policy"
   role = aws_iam_role.s3_role.id
-  policy = <<EOF
+ policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Action": [
-        "s3:GetObject"
-      ],
+      "Action": "s3:GetObject",
       "Effect": "Allow",
       "Resource": "arn:aws:s3:::g1-microservices/*"
+    },
+    {
+      "Action": "sqs:*",
+      "Effect": "Allow",
+      "Resource": "arn:aws:sqs:ap-southeast-1:305262579855:group1-gcash-mini"
     }
   ]
 }
 EOF
 }
+
+
 output "apiGWEC2" {
   value = aws_instance.apigw.public_ip
 }
