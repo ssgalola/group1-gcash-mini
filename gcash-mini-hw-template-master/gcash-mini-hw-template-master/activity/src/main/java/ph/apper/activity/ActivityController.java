@@ -1,5 +1,6 @@
 package ph.apper.activity;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,12 @@ import java.util.List;
 @RequestMapping
 public class ActivityController {
 
-    private final List<Activity> activities = new ArrayList<>();
+
+    public ActivityController(List<Activity> activities) {
+        this.activities = activities;
+    }
+
+    private final List<Activity> activities;
 
     @GetMapping
     public ResponseEntity<List<Activity>> getAll() {
