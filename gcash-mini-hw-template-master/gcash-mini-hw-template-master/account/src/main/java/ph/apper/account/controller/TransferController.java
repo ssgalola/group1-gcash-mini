@@ -1,5 +1,6 @@
 package ph.apper.account.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class TransferController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> transfer(@RequestBody TransferRequest request) throws InvalidAccountRequestException, InsufficientBalanceException {
+    public ResponseEntity<Object> transfer(@RequestBody TransferRequest request) throws InvalidAccountRequestException, InsufficientBalanceException, JsonProcessingException {
         LOGGER.info("Money Transfer request received");
 
         double senderBalance = accountService.getAccountDetails(request.getFromAccountId()).getBalance();
@@ -46,7 +47,7 @@ public class TransferController {
             activity.setDetails("NEW MONEY TRANSFER: " + request.getAmount() +
                                 " FROM " + request.getFromAccountId() +
                                 " TO " + request.getToAccountId());
-            activityService.postActivity(activity);
+            activityService.submitActivity(activity);
 
             Double newSenderBalance = senderBalance - request.getAmount();
             accountService.updateBalance(request.getFromAccountId(), newSenderBalance);
@@ -54,7 +55,7 @@ public class TransferController {
             updateSenderBalance.setAction("UPDATE BALANCE");
             updateSenderBalance.setIdentifier(request.getFromAccountId());
             updateSenderBalance.setDetails("NEW ACCOUNT BALANCE: " + newSenderBalance);
-            activityService.postActivity(updateSenderBalance);
+            activityService.submitActivity(updateSenderBalance);
 
             Double newRecipientBalance = recipientBalance + request.getAmount();
             accountService.updateBalance(request.getToAccountId(), newRecipientBalance);
@@ -62,7 +63,7 @@ public class TransferController {
             updateRecipientBalance.setAction("UPDATE BALANCE");
             updateRecipientBalance.setIdentifier(request.getToAccountId());
             updateRecipientBalance.setDetails("NEW ACCOUNT BALANCE: " + newRecipientBalance);
-            activityService.postActivity(updateRecipientBalance);
+            activityService.submitActivity(updateRecipientBalance);
 
             return new ResponseEntity<>(HttpStatus.OK);
         }

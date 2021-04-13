@@ -1,5 +1,6 @@
 package ph.apper.account.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ public class AccountManagementController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createAccount(@Valid @RequestBody AccountRequest request){
+    public ResponseEntity<Object> createAccount(@Valid @RequestBody AccountRequest request) throws JsonProcessingException {
         LOGGER.info("Create account request received.");
         NewAccountResponse response = accountService.addAccount(request);
         LOGGER.info("Account Created");
@@ -41,7 +42,7 @@ public class AccountManagementController {
         activity.setAction("REGISTRATION");
         activity.setIdentifier(request.getEmail());
         activity.setDetails("NEW ACCOUNT CREATED: " + request.getEmail());
-        activityService.postActivity(activity);
+        activityService.submitActivity(activity);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -52,35 +53,35 @@ public class AccountManagementController {
     }
 
     @PostMapping("verify")
-    public ResponseEntity<Object> verifyAccount(@RequestBody VerifyAccountRequest request) throws InvalidAccountRequestException, InvalidVerificationCodeException {
+    public ResponseEntity<Object> verifyAccount(@RequestBody VerifyAccountRequest request) throws InvalidAccountRequestException, InvalidVerificationCodeException, JsonProcessingException {
         Activity activity = new Activity();
         activity.setAction("VERIFICATION");
         activity.setIdentifier(request.getEmail());
 
         if(accountService.verifyAccount(request.getEmail(), request.getVerificationCode())) {
             activity.setDetails("ACCOUNT VERIFIED:"+request.getEmail());
-            activityService.postActivity(activity);
+            activityService.submitActivity(activity);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>("Invalid email or verification code.", HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("authenticate")
-    public ResponseEntity<Object> authenticateAccount(@RequestBody AuthenticateAccountRequest request) throws InvalidLoginException, InvalidAccountRequestException {
+    public ResponseEntity<Object> authenticateAccount(@RequestBody AuthenticateAccountRequest request) throws InvalidLoginException, InvalidAccountRequestException, JsonProcessingException {
         Account account = accountService.authenticateAccount(request.getEmail(), request.getPassword());
         Activity activity = new Activity();
         activity.setAction("AUTHENTICATION");
         activity.setIdentifier(account.getEmail());
 
         activity.setDetails("ACCOUNT AUTHENTICATED:"+account.getEmail());
-        activityService.postActivity(activity);
+        activityService.submitActivity(activity);
         return new ResponseEntity<>(new AuthenticateResponse(account), HttpStatus.OK);
     }
 
     @PostMapping("{accountId}")
     public ResponseEntity<Object> updateBalance(
             @PathVariable("accountId") String accountId,
-            @RequestBody UpdateBalanceRequest request) throws InvalidAccountRequestException {
+            @RequestBody UpdateBalanceRequest request) throws InvalidAccountRequestException, JsonProcessingException {
         LOGGER.info("Update account balance request received.");
         UpdateBalanceResponse response = accountService.updateBalance(accountId, request.getNewBalance());
 
@@ -89,12 +90,12 @@ public class AccountManagementController {
         activity.setIdentifier(accountId);
         activity.setDetails("NEW ACCOUNT BALANCE: " + request.getNewBalance());
 
-        activityService.postActivity(activity);
+        activityService.submitActivity(activity);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("addFunds")
-    public ResponseEntity<Object> addFunds(@RequestBody AddFundsRequest request) throws InvalidAccountRequestException{
+    public ResponseEntity<Object> addFunds(@RequestBody AddFundsRequest request) throws InvalidAccountRequestException, JsonProcessingException {
         LOGGER.info("Add funds request received");
         Account account = accountService.getAccountById(request.getAccountId());
         Double updatedBalance = account.getBalance() + request.getAmount();
@@ -104,7 +105,7 @@ public class AccountManagementController {
         activity.setAction("ADD FUND");
         activity.setIdentifier(request.getAccountId());
         activity.setDetails("NEW BALANCE: " + updatedBalance);
-        activityService.postActivity(activity);
+        activityService.submitActivity(activity);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
