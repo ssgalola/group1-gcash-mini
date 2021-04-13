@@ -28,7 +28,7 @@ public class App {
     }
 
     @Bean
-    public CommandLineRunner pollSqs(@Value("${sqs.queueUrl}") String queueUrl, AmazonSQS amazonSQS) {
+    public CommandLineRunner pollSqs(@Value("https://sqs.ap-southeast-1.amazonaws.com/305262579855/group1-gcash-mini") String queueUrl, AmazonSQS amazonSQS) {
         return new CommandLineRunner() {
             @Override
             public void run(String... args) throws Exception {
