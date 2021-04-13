@@ -89,13 +89,16 @@ resource "aws_security_group" "accountSG"{
     from_port = 22
     protocol = "tcp"
     to_port = 22
-    cidr_blocks = ["0.0.0.0/0"]
+//    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [aws_security_group.apiGatewaySG.id]
+
   }
   ingress {
     from_port = 8081
     protocol = "tcp"
     to_port = 8081
-    cidr_blocks = ["0.0.0.0/0"]
+//    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [aws_security_group.purchaseSG.id, aws_security_group.apiGatewaySG.id]
   }
   egress {
     from_port = 0
@@ -111,13 +114,17 @@ resource "aws_security_group" "activitySG"{
     from_port = 22
     protocol = "tcp"
     to_port = 22
-    cidr_blocks = ["0.0.0.0/0"]
+//    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [aws_security_group.apiGatewaySG.id]
+
   }
   ingress {
     from_port = 8082
     protocol = "tcp"
     to_port = 8082
-    cidr_blocks = ["0.0.0.0/0"]
+//    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [aws_security_group.productSG.id, aws_security_group.accountSG.id, aws_security_group.purchaseSG.id, aws_security_group.apiGatewaySG.id]
+
   }
   egress {
     from_port = 0
@@ -134,13 +141,17 @@ resource "aws_security_group" "productSG"{
     from_port = 22
     protocol = "tcp"
     to_port = 22
-    cidr_blocks = ["0.0.0.0/0"]
+//    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [aws_security_group.apiGatewaySG.id]
+
   }
   ingress {
     from_port = 8083
     protocol = "tcp"
     to_port = 8083
-    cidr_blocks = ["0.0.0.0/0"]
+//    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [aws_security_group.purchaseSG.id, aws_security_group.apiGatewaySG.id]
+
   }
   egress {
     from_port = 0
@@ -157,14 +168,18 @@ resource "aws_security_group" "purchaseSG"{
     from_port = 22
     protocol = "tcp"
     to_port = 22
-    cidr_blocks = ["0.0.0.0/0"]
+//    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [aws_security_group.apiGatewaySG.id]
+
   }
   ingress {
     from_port = 8084
     protocol = "tcp"
     to_port = 8084
-    cidr_blocks = ["0.0.0.0/0"]
+//    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [aws_security_group.apiGatewaySG.id]
   }
+
   egress {
     from_port = 0
     protocol = "-1"
