@@ -179,6 +179,7 @@ resource "aws_instance" "apigw" {
   subnet_id = aws_subnet.public_subnet.id
   key_name = aws_key_pair.keypair.key_name
   vpc_security_group_ids = [aws_security_group.apiGatewaySG.id]
+  associate_public_ip_address = true
   # user_data = file("init_gateway.sh")
   user_data =<<EOF
   #!/bin/bash
@@ -187,10 +188,10 @@ aws s3 cp s3://g1-microservices/api-gateway/api-gateway-0.0.1-SNAPSHOT.jar /home
 aws s3 cp s3://g1-microservices/api-gateway/boot-ctl.sh /home/ec2-user/boot-ctl.sh
 aws s3 cp s3://g1-microservices/api-gateway/application.properties /home/ec2-user/application.properties
 amazon-linux-extras install java-openjdk11 -y
-sed -i 's/localhost:8081/${aws_instance.account.public_ip}:8081/g' /home/ec2-user/application.properties
-sed -i 's/localhost:8082/${aws_instance.activity.public_ip}:8082/' /home/ec2-user/application.properties
-sed -i 's/localhost:8083/${aws_instance.products.public_ip}:8083/' /home/ec2-user/application.properties
-sed -i 's/localhost:8084/${aws_instance.purchase.public_ip}:8084/' /home/ec2-user/application.properties
+sed -i 's/localhost:8081/${aws_instance.account.private_ip}:8081/g' /home/ec2-user/application.properties
+sed -i 's/localhost:8082/${aws_instance.activity.private_ip}:8082/' /home/ec2-user/application.properties
+sed -i 's/localhost:8083/${aws_instance.products.private_ip}:8083/' /home/ec2-user/application.properties
+sed -i 's/localhost:8084/${aws_instance.purchase.private_ip}:8084/' /home/ec2-user/application.properties
 chmod +x /home/ec2-user/boot-ctl.sh
 ./boot-ctl.sh start
 EOF
@@ -203,10 +204,10 @@ EOF
 resource "aws_instance" "account" {
   ami = "ami-03ca998611da0fe12"
   instance_type = "t2.micro"
-  subnet_id = aws_subnet.public_subnet.id
+  subnet_id = aws_subnet.private_subnet.id
   key_name = aws_key_pair.keypair.key_name
   vpc_security_group_ids = [aws_security_group.accountSG.id]
-  associate_public_ip_address = true
+//  associate_public_ip_address = true
   # user_data = file("init_account.sh")
   user_data = <<EOF
 #!/bin/bash
@@ -215,7 +216,7 @@ aws s3 cp s3://g1-microservices/account-management/account-management-0.0.1-SNAP
 aws s3 cp s3://g1-microservices/account-management/boot-ctl.sh /home/ec2-user/boot-ctl.sh
 aws s3 cp s3://g1-microservices/account-management/application.properties /home/ec2-user/application.properties
 amazon-linux-extras install java-openjdk11 -y
-sed -i 's/localhost:8082/${aws_instance.activity.public_ip}:8082/' /home/ec2-user/application.properties
+sed -i 's/localhost:8082/${aws_instance.activity.private_ip}:8082/' /home/ec2-user/application.properties
 chmod +x /home/ec2-user/boot-ctl.sh
 ./boot-ctl.sh start
 EOF
@@ -228,10 +229,10 @@ EOF
 resource "aws_instance" "activity" {
   ami = "ami-03ca998611da0fe12"
   instance_type = "t2.micro"
-  subnet_id = aws_subnet.public_subnet.id
+  subnet_id = aws_subnet.private_subnet.id
   key_name = aws_key_pair.keypair.key_name
   vpc_security_group_ids = [aws_security_group.activitySG.id]
-  associate_public_ip_address = true
+//  associate_public_ip_address = true
 //  user_data = file("init_activity.sh")
   user_data = <<EOF
 #!/bin/bash
@@ -252,10 +253,10 @@ EOF
 resource "aws_instance" "purchase" {
   ami = "ami-03ca998611da0fe12"
   instance_type = "t2.micro"
-  subnet_id = aws_subnet.public_subnet.id
+  subnet_id = aws_subnet.private_subnet.id
   key_name = aws_key_pair.keypair.key_name
   vpc_security_group_ids = [aws_security_group.purchaseSG.id]
-  associate_public_ip_address = true
+//  associate_public_ip_address = true
   # user_data = file("init_purchase.sh")
   user_data =<<EOF
   #!/bin/bash
@@ -264,9 +265,9 @@ aws s3 cp s3://g1-microservices/purchase/purchase-0.0.1-SNAPSHOT.jar /home/ec2-u
 aws s3 cp s3://g1-microservices/purchase/boot-ctl.sh /home/ec2-user/boot-ctl.sh
 aws s3 cp s3://g1-microservices/purchase/application.properties /home/ec2-user/application.properties
 amazon-linux-extras install java-openjdk11 -y
-sed -i 's/localhost:8081/${aws_instance.account.public_ip}:8081/' /home/ec2-user/application.properties
-sed -i 's/localhost:8082/${aws_instance.activity.public_ip}:8082/' /home/ec2-user/application.properties
-sed -i 's/localhost:8083/${aws_instance.products.public_ip}:8083/' /home/ec2-user/application.properties
+sed -i 's/localhost:8081/${aws_instance.account.private_ip}:8081/' /home/ec2-user/application.properties
+sed -i 's/localhost:8082/${aws_instance.activity.private_ip}:8082/' /home/ec2-user/application.properties
+sed -i 's/localhost:8083/${aws_instance.products.private_ip}:8083/' /home/ec2-user/application.properties
 chmod +x /home/ec2-user/boot-ctl.sh
 ./boot-ctl.sh start
 EOF
@@ -279,10 +280,10 @@ EOF
 resource "aws_instance" "products" {
   ami = "ami-03ca998611da0fe12"
   instance_type = "t2.micro"
-  subnet_id = aws_subnet.public_subnet.id
+  subnet_id = aws_subnet.private_subnet.id
   key_name = aws_key_pair.keypair.key_name
   vpc_security_group_ids = [aws_security_group.productSG.id]
-  associate_public_ip_address = true
+//  associate_public_ip_address = true
   # user_data = file("init_product.sh")
   user_data =<<EOF
 #!/bin/bash
@@ -291,7 +292,7 @@ aws s3 cp s3://g1-microservices/product/product-0.0.1-SNAPSHOT.jar /home/ec2-use
 aws s3 cp s3://g1-microservices/product/boot-ctl.sh /home/ec2-user/boot-ctl.sh
 aws s3 cp s3://g1-microservices/product/application.properties /home/ec2-user/application.properties
 amazon-linux-extras install java-openjdk11 -y
-sed -i 's/localhost:8082/${aws_instance.activity.public_ip}:8082/' /home/ec2-user/application.properties
+sed -i 's/localhost:8082/${aws_instance.activity.private_ip}:8082/' /home/ec2-user/application.properties
 chmod +x /home/ec2-user/boot-ctl.sh
 ./boot-ctl.sh start
   EOF
@@ -346,15 +347,15 @@ output "apiGWEC2" {
 }
 
 output "accountEC2" {
-  value = aws_instance.account.public_ip
+  value = aws_instance.account.private_ip
 }
 output "activityEC2" {
-  value = aws_instance.activity.public_ip
+  value = aws_instance.activity.private_ip
 }
 output "productEC2" {
-  value = aws_instance.products.public_ip
+  value = aws_instance.products.private_ip
 }
 output "purchaseEC2" {
-  value = aws_instance.purchase.public_ip
+  value = aws_instance.purchase.private_ip
 }
 
