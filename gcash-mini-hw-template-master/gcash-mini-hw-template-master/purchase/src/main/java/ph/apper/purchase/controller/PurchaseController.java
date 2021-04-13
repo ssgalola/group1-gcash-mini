@@ -1,5 +1,6 @@
 package ph.apper.purchase.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import ph.apper.purchase.payload.UpdateBalanceRequest;
 import ph.apper.purchase.payload.response.GetAccountResponse;
 import ph.apper.purchase.payload.response.ProductData;
 import ph.apper.purchase.payload.response.UpdateBalanceResponse;
+import ph.apper.purchase.util.ActivityService;
 
 @RestController
 @RequestMapping("purchase")
@@ -26,14 +28,16 @@ public class PurchaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseController.class);
     private final RestTemplate restTemplate;
     private final App.GCashMiniProperties gCashMiniProperties;
+    private final ActivityService activityService;
 
-    public PurchaseController(RestTemplate restTemplate, App.GCashMiniProperties gCashMiniProperties) {
+    public PurchaseController(RestTemplate restTemplate, App.GCashMiniProperties gCashMiniProperties, ActivityService activityService) {
         this.restTemplate = restTemplate;
         this.gCashMiniProperties = gCashMiniProperties;
+        this.activityService = activityService;
     }
 
     @PostMapping
-    public ResponseEntity purchase(@RequestBody PurchaseRequest request) throws ProductNotFoundException, HttpClientErrorException, InsufficientBalanceException, HttpMessageNotReadableException {
+    public ResponseEntity purchase(@RequestBody PurchaseRequest request) throws ProductNotFoundException, HttpClientErrorException, InsufficientBalanceException, HttpMessageNotReadableException, JsonProcessingException {
         LOGGER.info(String.valueOf(request));
 
         ResponseEntity<ProductData> productResponse = restTemplate.getForEntity(gCashMiniProperties.getProductUrl() + request.getProductId(), ProductData.class);
@@ -68,14 +72,7 @@ public class PurchaseController {
         activity.setAction("PURCHASE");
         activity.setIdentifier(String.valueOf(request.getAccountId()));
         activity.setDetails("PURCHASED: " + request.getProductId());
-
-        ResponseEntity<Activity[]> activityResponse = restTemplate.postForEntity(gCashMiniProperties.getActivityUrl(), activity, Activity[].class);
-        if (activityResponse.getStatusCode().is2xxSuccessful()) {
-            LOGGER.info("Purchase activity recorded");
-        }
-        else {
-            LOGGER.error("Err: " + activityResponse.getStatusCode());
-        }
+        activityService.submitActivity(activity);
 
         Double newBalance = accountData.getBalance() - productData.getPrice();
         UpdateBalanceRequest updateBalanceRequest = new UpdateBalanceRequest();

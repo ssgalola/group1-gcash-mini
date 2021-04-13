@@ -29,5 +29,6 @@ public class App {
         private String activityUrl;
         private String accountUrl;
         private String productUrl;
+        private String queueUrl;
     }
 }
