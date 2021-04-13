@@ -1,0 +1,15 @@
+For the comments, suggestions, and recommendations, our group believe it is safe to say that everyone, including
+the other groups, did a great job. The things needed to work on, skills-wise and project-wise, 
+were already addressed during the presentation. We really can't comment on how the group worked and how 
+they approached the requirements, considering the fact that this was everyone's first collaborative work 
+and we don't know how each of us works/do our thing.
+What we can say is that for our group, we made sure that all requirements given were met and that we can present
+a minimum viable product to our client, then work on the recommendations/feedbacks after such as on
+which database does the client want to use, will it work from our perspective, the additional features the client 
+would want, and the like.
+Our group started the project early, and made sure that in every step, our project can be deployed smoothly. We tested 
+deployment thrice. First, when all modules were completed except the API and activity; second, 
+when all modules were completed; and lastly, when SQS was implemented. This was an huge advantage for our group, 
+since we regularly check our deployment, we were able to avoid issues during the deployment of the entire project. 
+This saved and gave us time to work on other details for the project such as transaction conditions, 
+proper request responses, unit tests, and preparing for crud implementation (branch in repo).
